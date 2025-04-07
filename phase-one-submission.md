@@ -37,7 +37,17 @@
 
 **Risk Management & Quality Assurance** 
 
-  ...
+  Potential risks surrounding resourcing will certainly play a role in our project and thus must be strongly considered in 
+  our scope and project requirements. These resource risks include group member illnesses, service outages and …. 
+  Furthermore, an unlikely but still security critical element is that other teams do not gain access to our plans and 
+  particularly our code repositories, to avoid this we need to ensure that our GitHub repo remains private, and members do 
+  not give access or share details of the project to external stakeholders. Technical risks of the project include missing 
+  key elements of the privilege separation or privilege elevation requirements. Code quality will be maintained by following 
+  the CERT C Secure Coding Standard, which provides guidelines for secure and reliable coding practices in C particularly 
+  involving what to do in the case of integer/buffer overflow and uninitialized variables. We will also aim to align our 
+  style with Google’s C Style Guide. Peer reviews will be done manually from group members whenever changes are made to our 
+  code base using GitHub’s pull request capability. We will also use automated testing methods by creating unit tests using 
+  …. Furthermore, Clangs static analyser will be implemented in our code as well.
 
 **Group Name** 
 
