@@ -29,7 +29,8 @@
     	ensuring all members use the same debugger and compiling specifications.
   3.	The security practice of ensuring secure over efficient code is also highly relevant to our project and its associated requirements as it dictates our development
       philosophy and what is prioritized within the process. It will be applied in our development whenever there is an implementation or high-level decision which involves
-    	choosing whether to prioritize secure, readable code or efficient, fancy code. The group will ensure this idea is effectively implemented by 
+    	choosing whether to prioritize secure, readable code or efficient, fancy code. The group will ensure this secure coding philosophy is effectively implemented by
+    	conferring with each other before making such decisions and by having secure, understandable code always at the forefront of our processes.
   5.	…
 
 **Risk Management & Quality Assurance** 
