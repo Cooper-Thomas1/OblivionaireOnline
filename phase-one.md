@@ -31,7 +31,9 @@
       philosophy and what is prioritized within the process. It will be applied in our development whenever there is an implementation or high-level decision which involves
     	choosing whether to prioritize secure, readable code or efficient, fancy code. The group will ensure this secure coding philosophy is effectively implemented by
     	conferring with each other before making such decisions and by having secure, understandable code always at the forefront of our processes.
-  5.	…
+  5.	The use of static code analysis tools like splint will be relevant to our project as they help detect vulnerabilities and bad practices before runtime. It will be
+      applied regularly during development to review code for security issues. The group will ensure effective use by making splint checks part of our coding workflow and
+    	reviewing any flagged warnings together.
 
 **Risk Management & Quality Assurance** 
 
