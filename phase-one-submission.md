@@ -1,8 +1,20 @@
-**TO DO**
-- Assign Roles
-- Add Technical Risks
-- Add Depth To Key Secure Coding Practices
-- General Edit/Add Details
+# CITS3007 Group Project – Phase 1 Report 
+**Group Name**: _Protectors of Privileges_ 
+**Group Number**: _33_
+**Date**: 16 Apr 2025
+
+## Group Members
+
+| Name | Student Number |
+|--------------------|----------------|
+| Cooper Thomas | 23723986 |
+| Elke Ruane | 23748615 |
+| Fin O'Loughlin | 23616047 |
+| Marc Labouchardiere | 23857377 |
+| Mika Li | 24386354 |
+
+
+---
 
 
 **Team Communication & Responsibilities**
