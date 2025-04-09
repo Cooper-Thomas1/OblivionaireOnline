@@ -1,3 +1,10 @@
+**TO DO**
+Assign Roles
+Add Technical Risks
+Add Depth To Key Secure Coding Practices
+General Edit/Add Details
+
+
 **Team Communication & Responsibilities**
 
   We will meet weekly to discuss weekly updates, progress reports and adjusting our high-level approaches to the project in face-to-face meetings at UWA on Wednesday 
