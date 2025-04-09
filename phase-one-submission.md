@@ -13,11 +13,9 @@
 | Marc Labouchardiere | 23857377 |
 | Mika Li | 24386354 |
 
-
 ---
 
-
-**Team Communication & Responsibilities**
+**   Team Communication & Responsibilities**
 
   We will meet weekly to discuss weekly updates, progress reports and adjusting our high-level approaches to the project in face-to-face meetings at UWA on Wednesday 
   mornings. As well as our weekly status updates, we will implement ad hoc emergency meetings through MS Teams as required when there are critical bugs and fixes required. 
