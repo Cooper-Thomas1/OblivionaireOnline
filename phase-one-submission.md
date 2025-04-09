@@ -1,8 +1,8 @@
 **TO DO**
-Assign Roles
-Add Technical Risks
-Add Depth To Key Secure Coding Practices
-General Edit/Add Details
+*Assign Roles
+*Add Technical Risks
+*Add Depth To Key Secure Coding Practices
+*General Edit/Add Details
 
 
 **Team Communication & Responsibilities**
