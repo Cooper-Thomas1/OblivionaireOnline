@@ -25,14 +25,27 @@ We will meet weekly to discuss weekly updates, progress reports and adjusting ou
 mornings. As well as our weekly status updates, we will implement ad hoc emergency meetings through MS Teams as required when there are critical bugs and fixes required. 
 Our preferred communication tool is MS Teams where will discuss the bulk of the project.
 
+**UPDATE**: Our team will hold `weekly face-to-face` meetings at UWA on Wednesday mornings. These will allow us to provide weekly status updates, issues, challenges, etc. Our preferred communication tool, as well as any ad hoc emergency meetings will be hosted via `Microsoft Teams`, where requiref for critical bugs/fixed required. 
+
 > Define how responsibilities will be allocated in phase 2. Who will be responsible for which tasks?
 
 
 We will fairly distribute tasks by aiming to assign them according to each members strengths and preferences. Specifically, Cooper will do …. 
 
+**UPDATE** Tasks will be assigned based on each member's strengths and preferences to encourage motivation and to completion. For examples:
+
+- **Cooper** - 
+- **Elke** - 
+- **Fin** - 
+- **Marc** - 
+- **Mika** - 
+
+
+
+
 > How will the group ensure accountability and track progress?
 
-We will ensure accountability and progress by ding weekly status reports in our team meetings where each member will give updates on what they’ve been working on in the last week as well as any   recurring problems that they may need extra support on. Furthermore, by utilising GitHub’s version control we can track all changes with a comprehensive history of what 
+We will ensure accountability and progress by doing weekly status reports in our team meetings where each member will give updates on what they’ve been working on in the last week as well as any   recurring problems that they may need extra support on. Furthermore, by utilising GitHub’s version control we can track all changes with a comprehensive history of what 
 changes were made, when they occurred and who implemented them.
 
 ---
