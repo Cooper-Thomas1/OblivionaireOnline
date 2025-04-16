@@ -62,9 +62,22 @@ We will also be `GitHub` for version control, where we can track all changes wit
 Our source code will be written on `GitHub`, and we will handle merges by ensuring all changes are approved in a code review by another group member before any changes to our code base are pushed. 
 
 
-> If you’re familiar with version control branching strategies, will you adopt any particular strategy or workflow? (e.g., feature branches, main/dev workflow). Identify any version control policies (e.g., commit message conventions, review/approval process before merging).
+> If you’re familiar with version control branching strategies, will you adopt any particular strategy or workflow? (e.g., feature branches, main/dev workflow). 
 
-Each member will be assigned a particular section to work on and will create their own branch to avoid clashes thus increasing efficiency by eliminating unnecessary overlapping work. Specifically, our version control implementation strategy will be a main/dev workflow with feature specific branching within each dev branch as necessary. To maintain uniformity in our project we will ensure that all commit messages specify three things; what was the change made, why was the change made and any potential improvements/problems still to be done. Furthermore, each push should be reviewed by at least one other group member before being pushed to main.
+Each member will be assigned a particular section to work on and will create their own branch to avoid clashes thus increasing efficiency by eliminating unnecessary overlapping work. Specifically, our version control implementation strategy will be a main/dev workflow with feature specific branching within each dev branch as necessary. 
+
+**UPDATE** We will adopt a `main/dev` workflow, with feature specific branching within each dev branch as necessary
+
+- The `main` branch will contain production-ready code.
+- The `dev` branch will be the integration brnahc where feature branches are merged after testing
+- Each group member will create feature-specific branches based on assigned components (e.g. `feature/operation-access`). This structure helps reduce merge conflicts and allows us to work on the project simultaneously.
+
+
+> Identify any version control policies (e.g., commit message conventions, review/approval process before merging).
+
+To maintain uniformity in our project we will ensure that all commit messages specify three things; what was the change made, why was the change made and any potential improvements/problems still to be done. Furthermore, each push should be reviewed by at least one other group member before being pushed to main.
+
+**UPDATE** 
 
 ---
 
