@@ -127,27 +127,27 @@ reviewing any flagged warnings together.
 
 > Outline potential risks to the project and how they will be mitigated. (You may wish to think about resourcing risks – e.g. member illness, service outage – as well as technical and operational risks.)
 
-1. Group Member Illnesses/ Service Outages
+1. Group Member Illnesses/ Service Outages  
    An important risk to the project are resourcing risks where we may have interuptions to our work or an increased workload due to member unavailability. To mitigate this, we will ensure our code is readable and every
    group member understands all aspects of the project so there is no tech debt.
 
-2. Authentication Logic Errors
+2. Authentication Logic Errors  
    A critical risk is the incorrect implementation of authentication or session handling which could lead to unauthorized access. To mitigate this, we will design the login flow early and review all authentication related
    code during peer reviews in our Wednesday meetings.
 
-3. Insecure Password Handling
+3. Insecure Password Handling  
    Storing or transmitting passwords insecurely is a serious security risk. To mitigate this, we will use secure hashing such as SHA256 with salt and ensure sensitive data is encrypted.
 
-4. Unvalidated Input
+4. Unvalidated Input  
    Failing to validate user input can lead to injection attacks. To mitigate this, we will sanitise all inputs and avoid unsafe C functions like gets(), instead using functions like fgets().
 
-5. Poor Privilege Handling
+5. Poor Privilege Handling  
     Missing edge cases in privilege elevation could expose admin functions to regular users. To mitigate this, we will implement test cases covering access control logic.
 
-6. Low C Security Familiarity
+6. Low C Security Familiarity  
     Not all team members may be comfortable with secure C programming practices. To mitigate this, we will share resources and get more experienced members to help them out when needed.
 
-7. Tool Conflicts and Merge Errors
+7. Tool Conflicts and Merge Errors  
     Version control conflicts or tool inconsistencies could disrupt progress. To mitigate this, we'll adopt a feature-branch strategy, standardise our build environment using a shared Makefile, and conduct merges through
     pull requests.
 
