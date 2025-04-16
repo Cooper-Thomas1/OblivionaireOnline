@@ -185,73 +185,14 @@ As an overarching mitigation strategy, we have developed a project timelime with
 
 ### Weekly Schedule
 
-<table>
-  <thead>
-    <tr>
-      <th><strong>Week</strong></th>
-      <th><strong>Meeting Time</strong></th>
-      <th><strong>Agenda</strong></th>
-      <th><strong>Tasks Completed Before Meeting</strong></th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><strong>Week 7</strong></td>
-      <td>9am Wednesday</td>
-      <td>- Plan report content</td>
-      <td>N/A</td>
-    </tr>
-    <tr>
-      <td><strong>Week 8</strong></td>
-      <td>9am Wednesday</td>
-      <td>- Edit and finalise report</td>
-      <td>Report Draft</td>
-    </tr>
-    <tr>
-      <td><strong>Study Break</strong></td>
-      <td>9am Wednesday</td>
-      <td>
-        - Discuss details of phase 2<br>
-        - Plan approach to each component and how they will work together<br>
-        - Brainstorm potential issues/blind spots
-      </td>
-      <td>
-        - Read through phase 2<br>
-        - Begin brainstorming
-      </td>
-    </tr>
-    <tr>
-      <td><strong>Week 9</strong></td>
-      <td>9am Wednesday</td>
-      <td>
-        - Discuss any issues with individual assigned components<br>
-        - Assist each other<br>
-        - Plan and start phase 2 report
-      </td>
-      <td>Started phase 2</td>
-    </tr>
-    <tr>
-      <td><strong>Week 10</strong></td>
-      <td>9am Wednesday</td>
-      <td>
-        - Edit and finalise phase 2 report<br>
-        - Final checks of implementation<br>
-        - Begin planning reflection (phase 3)
-      </td>
-      <td>Implementation and report</td>
-    </tr>
-    <tr>
-      <td><strong>Week 11</strong></td>
-      <td>9am Wednesday</td>
-      <td>
-        - Finalise presentation<br>
-        - Finalise reflection<br>
-        - Practice demo/presentation
-      </td>
-      <td>Presentation and reflection</td>
-    </tr>
-  </tbody>
-</table>
+| **Week**       | **Meeting Time** | **Agenda**                                                                                     | **Tasks Completed Before Meeting** |
+|-----------------|------------------|-----------------------------------------------------------------------------------------------|-------------------------------------|
+| **Week 7**     | 9am Wednesday    | - Plan report content                                                                         | N/A                                 |
+| **Week 8**     | 9am Wednesday    | - Edit and finalise report                                                                    | Report Draft                        |
+| **Study Break**| 9am Wednesday    | - Discuss details of phase 2; Plan approach to each component and how they will work together; Brainstorm potential issues/blind spots | - Read through phase 2; Begin brainstorming |
+| **Week 9**     | 9am Wednesday    | - Discuss any issues with individual assigned components; Assist each other; Plan and start phase 2 report | Started phase 2                     |
+| **Week 10**    | 9am Wednesday    | - Edit and finalise phase 2 report; Final checks of implementation; Begin planning reflection (phase 3) | Implementation and report           |
+| **Week 11**    | 9am Wednesday    | - Finalise presentation; Finalise reflection; Practice demo/presentation              | Presentation and reflection         |
 
 > Describe how code quality will be maintained:
 – Will the group follow a specific coding standard?
