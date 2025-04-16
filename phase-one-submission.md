@@ -79,9 +79,11 @@ Good commit messages are important for maintaining a clear and understandable pr
 >List the common tools the group will use for implementation:
 Code editor or IDE (e.g., VS Code, JetBrains, Vim); Any additional tools for collaboration or efficiency (e.g., linters, debugging tools, CI/CD services). Explain why you made these choices.
 
-The standardised code editor where we will produce our C code within is VSCode. We selected VSCode due to its lightweight nature, cross-platform compatibility, and extensive extension ecosystem that supports C development, including syntax highlighting, integrated terminal, Git support, and debugging capabilities. For compiling and debugging, we will use the GCC compiler along with the GDB debugger. We have chosen to adopt a strict compiler configuration (see below) during the development and testing phases to enforce secure coding practices and catch common sources of bugs early. This configuration enables a comprehensive set of warning flags and debugging options that align with secure C programming principles taught in lectures and labs.
+Visual Studio Code (`VSCode`) will be the standardised code editor where we will create our `C` programs. We selected `VSCode` due to its lightweight nature, cross-platform compatibility, and extensive extension ecosystem that supports C development, including syntax highlighting (via `IntelliSense`), integrated terminal, in-built `Git` integration, and debugging capabilities.
 
-```
+For compiling and debugging, we will use the GCC compiler (for type errors) along with the `GDB debugger` (for logic errors). We have chosen to adopt a strict compiler configuration (see below) during the development and testing phases to enforce secure coding practices and to catch common sources of bugs early. This configuration enables a comprehensive set of warning flags and debugging options that align with secure `C` programming principles taught in the lectures and labs.
+
+```Makefile
 gcc -std=c11 -pedantic -Wall \
 	     -Wno-missing-braces -Wextra -Wno-missing-field-initializers \
 	     -Wformat=2 -Wswitch-default -Wswitch-enum -Wcast-align \
