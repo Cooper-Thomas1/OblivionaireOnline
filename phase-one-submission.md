@@ -87,8 +87,8 @@ We will follow consistent commit message convention:
 >List the common tools the group will use for implementation:
 Code editor or IDE (e.g., VS Code, JetBrains, Vim); Any additional tools for collaboration or efficiency (e.g., linters, debugging tools, CI/CD services). Explain why you made these choices.
 
-The standardised code editor where we will produce our C code within is VSCode as well as making use of several debuggers/linters including the gcc GNU debugger 
-specifically the gcc compiler configuration below for compiling our code in the testing phase 
+The standardised code editor where we will produce our C code within is VSCode. VS Code was selected due to its lightweight nature, cross-platform compatibility, and extensive extension ecosystem that supports C development, including syntax highlighting, integrated terminal, Git support, and debugging capabilities. For compiling and debugging, we will use the GCC compiler along with the GDB debugger. We have chosen to adopt a strict compiler configuration (see below) during the development and testing phases to enforce secure coding practices and catch common sources of bugs early. This configuration enables a comprehensive set of warning flags and debugging options that align with secure C programming principles taught in lectures and labs.
+
 ```
 gcc -std=c89 -pedantic -Wall \
 	     -Wno-missing-braces -Wextra -Wno-missing-field-initializers \
@@ -105,9 +105,11 @@ gcc -std=c89 -pedantic -Wall \
 	     -lm
 ```
 
-*this was sourced from https://stackoverflow.com/questions/154630/recommended-gcc-warning-options-for-c as recommended in Lab 6*
+*This was sourced from https://stackoverflow.com/questions/154630/recommended-gcc-warning-options-for-c as recommended in Lab 6*
 
-We chose to use the gcc debugger as, in the lectures and labs, it has proved to be an effective and trusted debugging tool, which we all have familiarity with and confidence in.
+Additionally, we will use GDB (GNU Debugger) for runtime debugging. GDB has been consistently used in CITS3007 lectures and labs, and all team members are familiar with its workflow. Its integration with VS Code allows for seamless breakpoints, step-through debugging, and variable inspection—crucial for diagnosing issues in low-level C code.
+
+We are also exploring the use of clang-tidy / cppcheck for static code analysis as our research into them suggests they are a highly useful tool for ensuring secure and safe code.
 
 
 ---
@@ -134,20 +136,32 @@ reviewing any flagged warnings together.
 
 > Outline potential risks to the project and how they will be mitigated. (You may wish to think about resourcing risks – e.g. member illness, service outage – as well as technical and operational risks.)
 
-Potential risks surrounding resourcing will certainly play a role in our project and thus must be strongly considered in 
-our scope and project requirements. These resource risks include group member illnesses, service outages and …. 
-Furthermore, an unlikely but still security critical element is that other teams do not gain access to our plans and 
-particularly our code repositories, to avoid this we need to ensure that our GitHub repo remains private, and members do 
-not give access or share details of the project to external stakeholders. Technical risks of the project include missing 
-key elements of the privilege separation or privilege elevation requirements. 
+1. Group Member Illnesses/ Service Outages
+An important risk to the project are resourcing risks where we may have interuptions to our work or an increased workload due to member unavailability. To mitigate this, we will ensure our code is readable and every group member understands all aspects of the project s0 there is no tech debt.
+
+2. Authentication Logic Errors
+A critical risk is the incorrect implementation of authentication or session handling which could lead to unauthorized access. To mitigate this, we will design the login flow early and review all authentication related code during peer reviews in our Wednesday meetings.
+
+3. Insecure Password Handling
+Storing or transmitting passwords insecurely is a serious security risk. To mitigate this, we will use secure hashing such as SHA256 with salt and ensure sensitive data is encrypted.
+
+4. Unvalidated Input
+Failing to validate user input can lead to injection attacks. To mitigate this, we will sanitise all inputs and avoid unsafe C functions like gets(), instead using functions like fgets().
+
+5. Poor Privilege Handling
+Missing edge cases in privilege elevation could expose admin functions to regular users. To kitigate this, we will implement test cases covering access control logic.
+
+6. Low C Security Familiarity
+Not all team members may be comfortable with secure C programming practices. To address this, we will share resources and get more experienced members to help them out when needed.
+
+7. Tool Conflicts and Merge Errors
+Version control conflicts or tool inconsistencies could disrupt progress. To mitigate this, we'll adopt a feature-branch strategy, standardize our build environment using a shared Makefile, and conduct merges through pull requests.
 
 > Describe how code quality will be maintained:
 – Will the group follow a specific coding standard?
 – Will peer reviews, automated testing, or static analysis tools be used?
 
-Code quality will be maintained by following the CERT C Secure Coding Standard, which provides guidelines for secure and reliable coding practices in C particularly involving what to do in the case of integer/buffer overflow and uninitialized variables. We will also aim to align our 
-style with Google’s C Style Guide. Peer reviews will be done manually from group members whenever changes are made to our 
-code base using GitHub’s pull request capability. We will also use automated testing methods by creating unit tests using Unity, a popular and lightweight framework for C development. Furthermore, Clangs static analyser will be implemented in our code as well.
+Code quality will be maintained by following the CERT C Secure Coding Standard, which provides guidelines for secure and reliable coding practices in C particularly involving what to do in the case of integer/buffer overflow and uninitialized variables. We will also aim to align our style with Google’s C Style Guide. Peer reviews will be done manually from group members whenever changes are made to our code base using GitHub’s pull request capability. We will also use automated testing methods by creating unit tests using Unity, a popular and lightweight framework for C development. Furthermore, Clangs static analyser will be implemented in our code as well.
 
 ---
 
