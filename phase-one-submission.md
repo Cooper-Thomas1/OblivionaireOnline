@@ -96,7 +96,8 @@ The standardised code editor where we will produce our C code within is VSCode a
 specifically gcc -pedantic -Wall -Wextra -Wconversion -Wshadow my_program.c -o my_program when compiling our C code. We chose to use the gcc debugger as, in the lectures 
 and labs, it has proved to be an effective and trusted debugging tool, which we all have familiarity with and confidence in.
 
-**UPDATE** Google sanitisers. 
+**UPDATE** Google sanitisers. gcc GNU debugger. gcc flags
+
 
 ---
 
@@ -105,16 +106,16 @@ and labs, it has proved to be an effective and trusted debugging tool, which we 
 >Identify three security-related tools or practices covered in the unit that will be most
 critical during phase 2. For each, explain: why it is relevant to the project; how it will be applied during development; and how the group will ensure it is effectively used.
 
-1.	The **gcc debugger** will be relevant to the project as it is essential to have a comprehensive debugging tool to catch errors and potential mistakes which ‘fall through
-    the cracks’ of standard compiling. It will be applied within our development process every time we compile any C code, and we will guarantee its effective use by
-    ensuring all members use the same debugger and compiling specifications.
-2.	The security practice of ensuring **secure over efficient code** is also highly relevant to our project and its associated requirements as it dictates our development
-    philosophy and what is prioritized within the process. It will be applied in our development whenever there is an implementation or high-level decision which involves
-    choosing whether to prioritize secure, readable code or efficient, fancy code. The group will ensure this secure coding philosophy is effectively implemented by
-    conferring with each other before making such decisions and by having secure, understandable code always at the forefront of our processes.
-3.	The use of **static code analysis tools** like splint will be relevant to our project as they help detect vulnerabilities and bad practices before runtime. It will be
-    applied regularly during development to review code for security issues. The group will ensure effective use by making splint checks part of our coding workflow and
-    reviewing any flagged warnings together.
+The **gcc debugger** will be relevant to the project as it is essential to have a comprehensive debugging tool to catch errors and potential mistakes which ‘fall through the cracks’ of standard compiling. It will be applied within our development process every time we compile any C code, and we will guarantee its effective use by ensuring all members use the same debugger and compiling specifications.
+
+The security practice of ensuring **secure over efficient code** is also highly relevant to our project and its associated requirements as it dictates our development
+philosophy and what is prioritized within the process. It will be applied in our development whenever there is an implementation or high-level decision which involves
+choosing whether to prioritize secure, readable code or efficient, fancy code. The group will ensure this secure coding philosophy is effectively implemented by
+conferring with each other before making such decisions and by having secure, understandable code always at the forefront of our processes.
+
+The use of **static code analysis tools** like splint will be relevant to our project as they help detect vulnerabilities and bad practices before runtime. It will be
+applied regularly during development to review code for security issues. The group will ensure effective use by making splint checks part of our coding workflow and
+reviewing any flagged warnings together.
 
 ---
 
