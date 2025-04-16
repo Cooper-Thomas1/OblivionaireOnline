@@ -26,7 +26,7 @@ Our team will hold `weekly face-to-face` meetings at UWA on Wednesday mornings. 
 
 > Define how responsibilities will be allocated in phase 2. Who will be responsible for which tasks?
 
-Tasks will be assigned based on each member's strengths and preferences to encourage motivation and to completion. For examples:
+Tasks will be assigned based on each member's strengths and preferences to encourage motivation and completion. For example:
 
 - **Cooper** - Team leader. In charge of submissions, coordination of group meetings, keeping track of the development of sections of work.
 - **Elke** - In charge of `Player authentication`
@@ -39,9 +39,7 @@ As a group we will plan how to implement each task and comprehensively discuss t
 
 > How will the group ensure accountability and track progress?
 
-Each week, team members will be accountable to doing `weekly status reports` in our team meetings. This is a space where each member can give updates on what they have been working on in the last week, as well as any problems encountered. 
-
-We will also use `GitHub` for version control, where we can track all changes with a comprehensive history of what changes were made, when they occurred, and who implemented them.
+Each week, team members will be accountable to doing `weekly status reports` in our team meetings. This is a space where each member can give updates on what they have been working on in the last week, as well as any problems encountered. We will also use `GitHub` for version control, where we can track all changes with a comprehensive history of what changes were made, when they occurred, and who implemented them.
 
 ---
 
@@ -80,7 +78,7 @@ We will follow consistent commit message convention:
 >List the common tools the group will use for implementation:
 Code editor or IDE (e.g., VS Code, JetBrains, Vim); Any additional tools for collaboration or efficiency (e.g., linters, debugging tools, CI/CD services). Explain why you made these choices.
 
-The standardised code editor where we will produce our C code within is VSCode. VS Code was selected due to its lightweight nature, cross-platform compatibility, and extensive extension ecosystem that supports C development, including syntax highlighting, integrated terminal, Git support, and debugging capabilities. For compiling and debugging, we will use the GCC compiler along with the GDB debugger. We have chosen to adopt a strict compiler configuration (see below) during the development and testing phases to enforce secure coding practices and catch common sources of bugs early. This configuration enables a comprehensive set of warning flags and debugging options that align with secure C programming principles taught in lectures and labs.
+The standardised code editor where we will produce our C code within is VSCode. We selected VSCode due to its lightweight nature, cross-platform compatibility, and extensive extension ecosystem that supports C development, including syntax highlighting, integrated terminal, Git support, and debugging capabilities. For compiling and debugging, we will use the GCC compiler along with the GDB debugger. We have chosen to adopt a strict compiler configuration (see below) during the development and testing phases to enforce secure coding practices and catch common sources of bugs early. This configuration enables a comprehensive set of warning flags and debugging options that align with secure C programming principles taught in lectures and labs.
 
 ```
 gcc -std=c89 -pedantic -Wall \
@@ -100,7 +98,7 @@ gcc -std=c89 -pedantic -Wall \
 
 *This was sourced from https://stackoverflow.com/questions/154630/recommended-gcc-warning-options-for-c as recommended in Lab 6*
 
-Additionally, we will use GDB (GNU Debugger) for runtime debugging. GDB has been consistently used in CITS3007 lectures and labs, and all team members are familiar with its workflow. Its integration with VS Code allows for seamless breakpoints, step-through debugging, and variable inspection—crucial for diagnosing issues in low-level C code.
+Additionally, we will use GDB (GNU Debugger) for runtime debugging. GDB has been consistently used in CITS3007 labs, and all team members are familiar with its workflow. Its integration with VS Code allows for seamless breakpoints, step-through debugging, and variable inspection—crucial for diagnosing issues in low-level C code.
 
 We are also exploring the use of clang-tidy / cppcheck for static code analysis as our research into them suggests they are a highly useful tool for ensuring secure and safe code.
 
@@ -130,7 +128,7 @@ reviewing any flagged warnings together.
 > Outline potential risks to the project and how they will be mitigated. (You may wish to think about resourcing risks – e.g. member illness, service outage – as well as technical and operational risks.)
 
 1. Group Member Illnesses/ Service Outages
-An important risk to the project are resourcing risks where we may have interuptions to our work or an increased workload due to member unavailability. To mitigate this, we will ensure our code is readable and every group member understands all aspects of the project s0 there is no tech debt.
+An important risk to the project are resourcing risks where we may have interuptions to our work or an increased workload due to member unavailability. To mitigate this, we will ensure our code is readable and every group member understands all aspects of the project so there is no tech debt.
 
 2. Authentication Logic Errors
 A critical risk is the incorrect implementation of authentication or session handling which could lead to unauthorized access. To mitigate this, we will design the login flow early and review all authentication related code during peer reviews in our Wednesday meetings.
@@ -142,13 +140,13 @@ Storing or transmitting passwords insecurely is a serious security risk. To miti
 Failing to validate user input can lead to injection attacks. To mitigate this, we will sanitise all inputs and avoid unsafe C functions like gets(), instead using functions like fgets().
 
 5. Poor Privilege Handling
-Missing edge cases in privilege elevation could expose admin functions to regular users. To kitigate this, we will implement test cases covering access control logic.
+Missing edge cases in privilege elevation could expose admin functions to regular users. To mitigate this, we will implement test cases covering access control logic.
 
 6. Low C Security Familiarity
-Not all team members may be comfortable with secure C programming practices. To address this, we will share resources and get more experienced members to help them out when needed.
+Not all team members may be comfortable with secure C programming practices. To mitigate this, we will share resources and get more experienced members to help them out when needed.
 
 7. Tool Conflicts and Merge Errors
-Version control conflicts or tool inconsistencies could disrupt progress. To mitigate this, we'll adopt a feature-branch strategy, standardize our build environment using a shared Makefile, and conduct merges through pull requests.
+Version control conflicts or tool inconsistencies could disrupt progress. To mitigate this, we'll adopt a feature-branch strategy, standardise our build environment using a shared Makefile, and conduct merges through pull requests.
 
 > Describe how code quality will be maintained:
 – Will the group follow a specific coding standard?
