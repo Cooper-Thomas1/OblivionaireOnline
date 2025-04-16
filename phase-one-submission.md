@@ -21,7 +21,7 @@
 
 > Describe how the group will communicate throughout the project: Frequency of meetings (e.g., weekly; fortnightly; as needed); Meeting format (e.g., face-to-face; online via video calls or chat platforms); Preferred communication tools (e.g., Discord, Slack, MS Teams, email)
 
-Our team will hold `weekly face-to-face` meetings at UWA on Wednesday mornings. These will allow us to provide weekly status updates, issues, challenges, etc. As well as our weekly status updates, we will implement ad hoc emergency meetings through MS Teams as required when there are critical bugs and fixes required. Our preferred communication tool will be `Microsoft Teams`, where will discuss the bulk of the project.
+Our team will hold `weekly face-to-face` meetings at UWA on Wednesday mornings. These will allow us to provide weekly status updates, issues, challenges, etc. As well as our weekly status updates, we will implement ad hoc emergency meetings through MS Teams as required when there are critical bugs and fixes required. Our preferred communication tool will be `Microsoft Teams`, where we will discuss the bulk of the project.
 
 
 > Define how responsibilities will be allocated in phase 2. Who will be responsible for which tasks?
@@ -30,9 +30,9 @@ Tasks will be assigned based on each member's strengths and preferences to encou
 
 - **Cooper** - Team leader. In charge of submissions, coordination of group meetings, keeping track of the development of sections of work. 
 - **Elke** - In charge of `Player authentication`
-- **Fin** - In charge `Session management`
+- **Fin** - In charge of `Session management`
 - **Marc** - In charge of `Role-based access control`
-- **Mika** - In charge `Admin and operations access`
+- **Mika** - In charge of `Admin and operations access`
 
 As a group we will plan how to implement each task and comprehensively discuss the requirements before we start writing any code, specifically following an Agile framework. As some sections are dependent on the ones before them to be completed, we will coordinate between group members on how these requirements will be facilitated and jump between tasks/features as necessary - particularly the team leader.
 
