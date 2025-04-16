@@ -30,9 +30,7 @@ Our preferred communication tool is MS Teams where will discuss the bulk of the 
 
 > Define how responsibilities will be allocated in phase 2. Who will be responsible for which tasks?
 
-We will fairly distribute tasks by aiming to assign them according to each members strengths and preferences. Specifically, Cooper will do …. 
-
-**UPDATE** Tasks will be assigned based on each member's strengths and preferences to encourage motivation and to completion. For examples:
+Tasks will be assigned based on each member's strengths and preferences to encourage motivation and to completion. For examples:
 
 - **Cooper** - Team leader. Is in charge of submissions, coordination of group meetings, keeping track of the development of sections of work.
 - **Elke** - In charge of `Player authentication`
@@ -40,13 +38,12 @@ We will fairly distribute tasks by aiming to assign them according to each membe
 - **Marc** - In charge of `Role-based access control`
 - **Mika** - In charge `Admin and operations access`
 
-Plan how to implement each task, discuss before we start writing code. Agile web dev framework. Some sections are dependent on the ones before to be completed, so coordination between group members will be needed to be facilitated (hence team leader).
+As a group we will plan how to implement each task and comprehensively discuss the requirements before we start writing any code, speicifically following an Agile framework. As some sections are dependent on the ones before them to be completed, we will coordinate between group members on how these requirements will be facilitated and jump between tasks/features as necessary - particularly the team leader.
 
 
 > How will the group ensure accountability and track progress?
 
-We will ensure accountability and progress by doing weekly status reports in our team meetings where each member will give updates on what they’ve been working on in the last week as well as any   recurring problems that they may need extra support on. Furthermore, by utilising GitHub’s version control we can track all changes with a comprehensive history of what 
-changes were made, when they occurred and who implemented them.
+We will ensure accountability and progress by doing weekly status reports in our team meetings where each member will give updates on what they’ve been working on in the last week as well as any recurring problems that they may need extra support on. Furthermore, by utilising GitHub’s version control we can track all changes with a comprehensive history of what changes were made, when they occurred and who implemented them.
 
 
 **UPDATE** Each week, team members will be accountable to doing `weekly status reports` in our team meetings. This is a space where each member can give updates on what they have been working on in the last week, as well as any problems encountered. 
@@ -59,25 +56,23 @@ We will also be `GitHub` for version control, where we can track all changes wit
 
 > Specify where the project’s source code will be hosted (e.g., GitHub, GitLab, Bitbucket). How will you handle merging members’ contributions?
 
-Our source code will be written on `GitHub`, and we will handle merges by ensuring all changes are approved in a code review by another group member before any changes to our code base are pushed. 
+Our source code will be written on `GitHub`, and we will handle merges by making sure each change is done using a pull request which guarantees all changes are approved in a code review by another group member before any changes to our code base are pushed. 
 
 
 > If you’re familiar with version control branching strategies, will you adopt any particular strategy or workflow? (e.g., feature branches, main/dev workflow). 
 
-Each member will be assigned a particular section to work on and will create their own branch to avoid clashes thus increasing efficiency by eliminating unnecessary overlapping work. Specifically, our version control implementation strategy will be a main/dev workflow with feature specific branching within each dev branch as necessary. 
-
-**UPDATE** We will adopt a `main/dev` workflow, with feature specific branching within each dev branch as necessary
+We will adopt a `main/dev` workflow, with feature specific branching within each dev branch as necessary.
 
 - The `main` branch will contain production-ready code.
-- The `dev` branch will be the integration brnahc where feature branches are merged after testing
+- The `dev` branch will be the integration branch where feature branches are merged after testing
 - Each group member will create feature-specific branches based on assigned components (e.g. `feature/operation-access`). This structure helps reduce merge conflicts and allows us to work on the project simultaneously.
+
+We chose to use feature branching within dev branches as we believe it aligns better with the requirements of our clients needs and means that devs in the team can jump between features as necessary without interupting the workflowm of the project.
 
 
 > Identify any version control policies (e.g., commit message conventions, review/approval process before merging).
 
-To maintain uniformity in our project we will ensure that all commit messages specify three things; what was the change made, why was the change made and any potential improvements/problems still to be done. Furthermore, each push should be reviewed by at least one other group member before being pushed to main.
-
-**UPDATE** All changes undergo a peer review before merging. This can be done via a `pull request` that must be approved by at least two other group members before merging into `dev` or `main`. 
+All changes will undergo a peer review before merging. This can be done via a `pull request` that must be approved by at least two other group members before merging into `dev` or `main`. 
 
 We will follow consistent commit message convention:
 - What was changed
@@ -93,10 +88,26 @@ We will follow consistent commit message convention:
 Code editor or IDE (e.g., VS Code, JetBrains, Vim); Any additional tools for collaboration or efficiency (e.g., linters, debugging tools, CI/CD services). Explain why you made these choices.
 
 The standardised code editor where we will produce our C code within is VSCode as well as making use of several debuggers/linters including the gcc GNU debugger 
-specifically gcc -pedantic -Wall -Wextra -Wconversion -Wshadow my_program.c -o my_program when compiling our C code. We chose to use the gcc debugger as, in the lectures 
-and labs, it has proved to be an effective and trusted debugging tool, which we all have familiarity with and confidence in.
+specifically the gcc compiler configuration below for compiling our code in the testing phase 
+```
+gcc -std=c89 -pedantic -Wall \
+	     -Wno-missing-braces -Wextra -Wno-missing-field-initializers \
+	     -Wformat=2 -Wswitch-default -Wswitch-enum -Wcast-align \
+	     -Wpointer-arith -Wbad-function-cast -Wstrict-overflow=5 \
+	     -Wstrict-prototypes -Winline -Wundef -Wnested-externs \
+	     -Wcast-qual -Wshadow -Wunreachable-code -Wlogical-op \
+	     -Wfloat-equal -Wstrict-aliasing=2 -Wredundant-decls \
+	     -Wold-style-definition -Werror \
+	     -ggdb3 \
+	     -O0 \
+	     -fno-omit-frame-pointer -ffloat-store \
+	     -fno-common -fstrict-aliasing \
+	     -lm
+```
 
-**UPDATE** Google sanitisers. gcc GNU debugger. gcc flags
+*this was sourced from https://stackoverflow.com/questions/154630/recommended-gcc-warning-options-for-c as recommended in Lab 6*
+
+We chose to use the gcc debugger as, in the lectures and labs, it has proved to be an effective and trusted debugging tool, which we all have familiarity with and confidence in.
 
 
 ---
