@@ -99,11 +99,11 @@ CFLAGS  := -std=c11 -pedantic -Wall -Wextra -Wshadow -Wconversion \
            -Wfloat-equal -Wstrict-aliasing=2 -Wredundant-decls \
            -Wold-style-definition -Werror \
            -ggdb3 -O0 -fno-omit-frame-pointer -fno-common -fstrict-aliasing \
-           -fsanitize=address,undefined -fno-sanitize-recover=all
-LDFLAGS := -fsanitize=address,undefined -lm -pthread
+           -fsanitize=address,undefined \
+           -fno-sanitize-recover=all -lm -pthread
 
 # Programs to build
-PROGRAMS := {programA} {programB} {programC}
+PROGRAMS := {programA} {programB} {programC} {...}
 OBJS     := $(PROGRAMS:%=%.o)
 
 # Default target
@@ -117,6 +117,7 @@ all: $(PROGRAMS)
 %: %.o
 	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
 
+(more omitted)
 ```
 
 *This was adapted from https://stackoverflow.com/questions/154630/recommended-gcc-warning-options-for-c as recommended in Lab 6*
@@ -134,23 +135,21 @@ critical during phase 2. For each, explain: why it is relevant to the project; h
 
 ### 1 - Static and Dynamic Code Analysers
 
-The use of **static code analysis tools** like splint will be relevant to our project as they help detect vulnerabilities and bad practices before runtime. It will be applied regularly during development to review code for security issues. The group will ensure effective use by making splint checks part of our coding workflow and reviewing any flagged warnings together.
+The use of **static code analysers** (like `clang-tidy`) will be relevant to our project as they help detect vulnerabilities and bad practices before runtime. It will be applied regularly during development to review code for security issues. 
+
+The group will ensure effective use by making `clang-tidy` checks part of our coding workflow and reviewing any flagged warnings together.
 
 ### 2 - GCC Debugger
 
-The **gcc debugger** will be relevant to the project as it is essential to have a comprehensive debugging tool to catch errors and potential mistakes which ‘fall through the cracks’ of standard compiling. It will be applied within our development process every time we compile any C code, and we will guarantee its effective use by ensuring all members use the same debugger and compiling specifications.
+The **gcc debugger** will be relevant to the project as it is essential to have a comprehensive debugging tool to catch errors and potential mistakes which ‘fall through the cracks’ of standard compiling. It will be applied within our development process every time we compile any C code.
 
-### 3 - Secure > Efficient Code
+We will guarantee its effective use by ensuring all members use the same debugger and compiling specifications.
 
-The security practice of ensuring **secure over efficient code** is also highly relevant to our project and its associated requirements as it dictates our development philosophy and what is prioritized within the process. It will be applied in our development whenever there is an implementation or high-level decision which involves choosing whether to prioritize secure, readable code or efficient, fancy code. The group will ensure this secure coding philosophy is effectively implemented by conferring with each other before making such decisions and by having secure, understandable code always at the forefront of our processes.
+### 3 - Best Practice for Storing Passwords (Hash, Salt)
 
-### 4 - Input Sanitisation
+Storing passwords is relevant for protecting user accounts in *Oblivionare Online*. The best practice is utilising a strong hashing algorithm (such as `bcrypt`), with a **unique salt** for each password. A random salt will be generated, and added to a user's password before hashing, ensuring identical passwords will still result in different hashes (protecting from brute-force and rainbow table attacks).
 
->TODO
-
-### 5 - Storing hashed passwords
-
->TODO
+The **Access Control System** is responsible for authenticating users, and must prevent the unauthorised access by 3<sup>rd</sup> parties. We will implement password handling via secure libraries that automatically perform salting and hashing. Our group will enforce this through code reviews (see *pull requests*), and performing password storage checks in testing phases. 
 
 ---
 
@@ -158,29 +157,35 @@ The security practice of ensuring **secure over efficient code** is also highly 
 
 > Outline potential risks to the project and how they will be mitigated. (You may wish to think about resourcing risks – e.g. member illness, service outage – as well as technical and operational risks.)
 
-1. Group Member Illnesses/ Service Outages  
-   An important risk to the project are resourcing risks where we may have interuptions to our work or an increased workload due to member unavailability. To mitigate this, we will ensure our code is readable and every
-   group member understands all aspects of the project so there is no tech debt.
+### 1 - Group Member Illnesses/ Service Outages  
 
-2. Authentication Logic Errors  
-   A critical risk is the incorrect implementation of authentication or session handling which could lead to unauthorized access. To mitigate this, we will design the login flow early and review all authentication related
-   code during peer reviews in our Wednesday meetings.
+An important risk to the project are resourcing risks where we may have interuptions to our work or an increased workload due to member unavailability. To mitigate this, we will ensure our code is readable and every group member understands all aspects of the project so there is no tech debt.
 
-3. Insecure Password Handling  
-   Storing or transmitting passwords insecurely is a serious security risk. To mitigate this, we will use secure hashing such as SHA256 with salt and ensure sensitive data is encrypted.
+### 2 - Authentication Logic Errors  
 
-4. Unvalidated Input  
-   Failing to validate user input can lead to injection attacks. To mitigate this, we will sanitise all inputs and avoid unsafe C functions like gets(), instead using functions like fgets().
+A critical risk is the incorrect implementation of authentication or session handling which could lead to unauthorized access. To mitigate this, we will design the login flow early and review all authentication related code during peer reviews in our Wednesday meetings.
 
-5. Poor Privilege Handling  
-    Missing edge cases in privilege elevation could expose admin functions to regular users. To mitigate this, we will implement test cases covering access control logic.
+### 3 - Insecure Password Handling  
 
-6. Low C Security Familiarity  
-    Not all team members may be comfortable with secure C programming practices. To mitigate this, we will share resources and get more experienced members to help them out when needed.
+Storing or transmitting passwords insecurely is a serious security risk. To mitigate this, we will use secure hashing such as SHA256 with salt and ensure sensitive data is encrypted.
 
-7. Tool Conflicts and Merge Errors  
-    Version control conflicts or tool inconsistencies could disrupt progress. To mitigate this, we'll adopt a feature-branch strategy, standardise our build environment using a shared Makefile, and conduct merges through
-    pull requests.
+### 4 - Unvalidated Input  
+
+Failing to validate user input can lead to injection attacks. To mitigate this, we will sanitise all inputs and avoid unsafe C functions like gets(), instead using functions like fgets().
+
+### 5 - Poor Privilege Handling  
+
+Missing edge cases in privilege elevation could expose admin functions to regular users. To mitigate this, we will implement test cases covering access control logic.
+
+### 6 - Low C Security Familiarity  
+
+Not all team members may be comfortable with secure C programming practices. To mitigate this, we will share resources and get more experienced members to help them out when needed.
+
+### 7 - Tool Conflicts and Merge Errors  
+
+Version control conflicts or tool inconsistencies could disrupt progress. To mitigate this, we'll adopt a feature-branch strategy, standardise our build environment using a shared Makefile, and conduct merges through pull requests.
+
+---
 
 > Describe how code quality will be maintained:
 – Will the group follow a specific coding standard?
