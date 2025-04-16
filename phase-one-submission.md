@@ -123,7 +123,7 @@ all: $(PROGRAMS)
 
 Additionally, we will use **GDB (GNU Debugger)** for runtime debugging. GDB has been consistently used in CITS3007 labs, and all team members are familiar with its workflow. Its integration with VS Code allows for seamless breakpoints, step-through debugging, and variable inspection—crucial for diagnosing issues in low-level C code.
 
-Code quality will be maintained via `clang-tidy`, which is a static analyser which is used to identify potential errors, style violations, and best practice violations. This static analyser will be integrated into the `VSCode` environment of all our group members, as it should be already integrated via the `C/C++ extension`
+Code quality will be maintained via `clang-tidy`, which is a static analyser which is used to identify potential errors, style violations, and best practice violations. This static analyser will be integrated into the `VSCode` environment of all our group members, as it should be already integrated via the `C/C++ extension`.
 
 ---
 
@@ -132,25 +132,25 @@ Code quality will be maintained via `clang-tidy`, which is a static analyser whi
 >Identify three security-related tools or practices covered in the unit that will be most
 critical during phase 2. For each, explain: why it is relevant to the project; how it will be applied during development; and how the group will ensure it is effectively used.
 
+### 1 - Static and Dynamic Code Analysers
+
+The use of **static code analysis tools** like splint will be relevant to our project as they help detect vulnerabilities and bad practices before runtime. It will be applied regularly during development to review code for security issues. The group will ensure effective use by making splint checks part of our coding workflow and reviewing any flagged warnings together.
+
+### 2 - GCC Debugger
+
 The **gcc debugger** will be relevant to the project as it is essential to have a comprehensive debugging tool to catch errors and potential mistakes which ‘fall through the cracks’ of standard compiling. It will be applied within our development process every time we compile any C code, and we will guarantee its effective use by ensuring all members use the same debugger and compiling specifications.
 
-The security practice of ensuring **secure over efficient code** is also highly relevant to our project and its associated requirements as it dictates our development
-philosophy and what is prioritized within the process. It will be applied in our development whenever there is an implementation or high-level decision which involves
-choosing whether to prioritize secure, readable code or efficient, fancy code. The group will ensure this secure coding philosophy is effectively implemented by
-conferring with each other before making such decisions and by having secure, understandable code always at the forefront of our processes.
+### 3 - Secure > Efficient Code
 
-The use of **static code analysis tools** like splint will be relevant to our project as they help detect vulnerabilities and bad practices before runtime. It will be
-applied regularly during development to review code for security issues. The group will ensure effective use by making splint checks part of our coding workflow and
-reviewing any flagged warnings together.
+The security practice of ensuring **secure over efficient code** is also highly relevant to our project and its associated requirements as it dictates our development philosophy and what is prioritized within the process. It will be applied in our development whenever there is an implementation or high-level decision which involves choosing whether to prioritize secure, readable code or efficient, fancy code. The group will ensure this secure coding philosophy is effectively implemented by conferring with each other before making such decisions and by having secure, understandable code always at the forefront of our processes.
 
-```
-1. POLP
-2. Static and Dynamic Code Analysers - Google Sanitiser,,,,
-3. Fuzzing
-4. Input Sanitisation -> prevent code injection
-5. Storing hashed passwords
+### 4 - Input Sanitisation
 
-```
+>TODO
+
+### 5 - Storing hashed passwords
+
+>TODO
 
 ---
 
