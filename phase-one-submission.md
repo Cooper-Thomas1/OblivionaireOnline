@@ -32,23 +32,20 @@ Our preferred communication tool is MS Teams where will discuss the bulk of the 
 
 Tasks will be assigned based on each member's strengths and preferences to encourage motivation and to completion. For examples:
 
-- **Cooper** - Team leader. Is in charge of submissions, coordination of group meetings, keeping track of the development of sections of work.
+- **Cooper** - Team leader. In charge of submissions, coordination of group meetings, keeping track of the development of sections of work.
 - **Elke** - In charge of `Player authentication`
 - **Fin** - In charge `Session management`
 - **Marc** - In charge of `Role-based access control`
 - **Mika** - In charge `Admin and operations access`
 
-As a group we will plan how to implement each task and comprehensively discuss the requirements before we start writing any code, speicifically following an Agile framework. As some sections are dependent on the ones before them to be completed, we will coordinate between group members on how these requirements will be facilitated and jump between tasks/features as necessary - particularly the team leader.
+As a group we will plan how to implement each task and comprehensively discuss the requirements before we start writing any code, specifically following an Agile framework. As some sections are dependent on the ones before them to be completed, we will coordinate between group members on how these requirements will be facilitated and jump between tasks/features as necessary - particularly the team leader.
 
 
 > How will the group ensure accountability and track progress?
 
-We will ensure accountability and progress by doing weekly status reports in our team meetings where each member will give updates on what they’ve been working on in the last week as well as any recurring problems that they may need extra support on. Furthermore, by utilising GitHub’s version control we can track all changes with a comprehensive history of what changes were made, when they occurred and who implemented them.
+Each week, team members will be accountable to doing `weekly status reports` in our team meetings. This is a space where each member can give updates on what they have been working on in the last week, as well as any problems encountered. 
 
-
-**UPDATE** Each week, team members will be accountable to doing `weekly status reports` in our team meetings. This is a space where each member can give updates on what they have been working on in the last week, as well as any problems encountered. 
-
-We will also be `GitHub` for version control, where we can track all changes with a comprehensive history of what changes were made, when they occurred, and who implemented them.
+We will also use `GitHub` for version control, where we can track all changes with a comprehensive history of what changes were made, when they occurred, and who implemented them.
 
 ---
 
