@@ -114,8 +114,7 @@ key elements of the privilege separation or privilege elevation requirements.
 
 Code quality will be maintained by following the CERT C Secure Coding Standard, which provides guidelines for secure and reliable coding practices in C particularly involving what to do in the case of integer/buffer overflow and uninitialized variables. We will also aim to align our 
 style with Google’s C Style Guide. Peer reviews will be done manually from group members whenever changes are made to our 
-code base using GitHub’s pull request capability. We will also use automated testing methods by creating unit tests using 
-…. Furthermore, Clangs static analyser will be implemented in our code as well.
+code base using GitHub’s pull request capability. We will also use automated testing methods by creating unit tests using Unity, a popular and lightweight framework for C development. Furthermore, Clangs static analyser will be implemented in our code as well.
 
 ---
 
