@@ -157,33 +157,33 @@ The **Access Control System** is responsible for authenticating users, and must 
 
 > Outline potential risks to the project and how they will be mitigated. (You may wish to think about resourcing risks – e.g. member illness, service outage – as well as technical and operational risks.)
 
-### 1 - Group Member Illnesses/ Service Outages  
+### Group Member Illnesses/Service Outages  
 
 An important risk to the project are resourcing risks where we may have interuptions to our work or an increased workload due to member unavailability. To mitigate this, we will ensure our code is readable and every group member understands all aspects of the project so there is no tech debt.
 
-### 2 - Authentication Logic Errors  
+### Authentication Logic Errors  
 
-A critical risk is the incorrect implementation of authentication or session handling which could lead to unauthorized access. To mitigate this, we will design the login flow early and review all authentication related code during peer reviews in our Wednesday meetings.
+A critical risk is the incorrect implementation of authentication or session handling which could lead to unauthorised access. To mitigate this, we will design the login flow early and review all authentication related code during peer reviews in our Wednesday meetings.
 
-### 3 - Insecure Password Handling  
+### Insecure Password Handling  
 
-Storing or transmitting passwords insecurely is a serious security risk. To mitigate this, we will use secure hashing such as SHA256 with salt and ensure sensitive data is encrypted.
+Storing or transmitting passwords insecurely is a serious security risk. To mitigate this, we will use functions designed for password hashing (such as `bcrypt`) to automatically handle the salting and hashing of passwords. We will also ensure that passwords meet basic security requirements, e.g. by specifying min length, special character inclusions. This mitigates **rainbow table** attacks.
 
-### 4 - Unvalidated Input  
+### Validating user input  
 
-Failing to validate user input can lead to injection attacks. To mitigate this, we will sanitise all inputs and avoid unsafe C functions like gets(), instead using functions like fgets().
+Failing to validate user input can lead to serious vulnerabilities like **buffer overflow** and **injection attacks**. To mitigate this, we will sanitise all inputs to avoid unsafe C function such as `gets()`, opting instead for the safer alternatives like `fgets()`, which limits input size and reduces the risk of memory corruption. 
 
-### 5 - Poor Privilege Handling  
+### Poor Privilege Handling  
 
-Missing edge cases in privilege elevation could expose admin functions to regular users. To mitigate this, we will implement test cases covering access control logic.
+Improper privilege checks can expose sensitive admin functions to unauthorised users. To prevent this, we will implement a strict **Role-Based Access Control (RBAC)** and implement test cases to cover all access control scenarios, including edge cases and priv esc attempts.
 
-### 6 - Low C Security Familiarity  
+### Low C Security Familiarity  
 
-Not all team members may be comfortable with secure C programming practices. To mitigate this, we will share resources and get more experienced members to help them out when needed.
+Not all team members may be comfortable with secure C programming practices. To mitigate this, we will share resources and get more experienced members to give guidance during development.
 
-### 7 - Tool Conflicts and Merge Errors  
+### Tool Conflicts and Merge Errors  
 
-Version control conflicts or tool inconsistencies could disrupt progress. To mitigate this, we'll adopt a feature-branch strategy, standardise our build environment using a shared Makefile, and conduct merges through pull requests.
+Version control conflicts or tool inconsistencies could disrupt progress. To mitigate this, we'll adopt a **feature-branch workflow**, standardise our build environment using a shared `Makefile`, and conduct merges through **pull requests**.
 
 ---
 
