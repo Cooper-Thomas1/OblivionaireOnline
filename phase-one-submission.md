@@ -34,12 +34,12 @@ Tasks will be assigned based on each member's strengths and preferences to encou
 - **Marc** - In charge of `Role-based access control`
 - **Mika** - In charge of `Admin and operations access`
 
-As a group we will plan how to implement each task and comprehensively discuss the requirements before we start writing any code, specifically following an Agile framework. As some sections are dependent on the ones before them to be completed, we will coordinate between group members on how these requirements will be facilitated and jump between tasks/features as necessary - particularly the team leader.
+As a group we will plan how to implement each task and comprehensively discuss the requirements before we start writing any code. Specifically, we will be following an Agile framework, which focuses on iterative development, continuous feedback, and adaptive planning ([https://agilemanifesto.org/](https://agilemanifesto.org/)). As some sections are dependent on the ones before them to be completed, we will coordinate between group members on how these requirements will be facilitated and jump between tasks/features as necessary - particularly the team leader.
 
 
 > How will the group ensure accountability and track progress?
 
-Each week, team members will be accountable to doing *weekly status reports* in our team meetings. This is a space where each member can give updates on what they have been working on in the last week, as well as any problems encountered. These features and changes will be logged via the `Issues` tabs, where any suggestions/improvements to the code can be contributed by group members.
+Each week, team members will be accountable for presenting *weekly status reports* in our team meetings. This is an opportunity for each member to give updates on their recent work, as well as highlight any problems encountered. These features and changes will be logged via the `Issues` tab, where other group members can contribute suggestions/improvements to the code.
 
 ---
 
@@ -47,7 +47,7 @@ Each week, team members will be accountable to doing *weekly status reports* in 
 
 > Specify where the project’s source code will be hosted (e.g., GitHub, GitLab, Bitbucket). How will you handle merging members’ contributions?
 
-We will use `GitHub` for version control, where we can track all changes with a comprehensive history of what changes were made, when they occurred, and who implemented them. We will handle merges by making sure each change is done via a `pull request`, which provides the opportunity for new feature's code to be reviewed. We will be aiming to have `pull requests` reviewed by two other group member before any changes to our code base are pushed. `Pull request` provide a structured way to review code, suggest changes, and to discuss code, ensuring code quality, and provides a means of collaboration between group members.
+We will use `GitHub` for version control, where we can track all changes with a comprehensive history of what changes were made, when they occurred, and who implemented them. We will handle merges by making sure each change is done via a `pull request`, which allows the new feature's code to be reviewed. We will require these `pull requests` to be reviewed by at least two other group members before it ca merged into the main codebase. This process provides a structured way to review, suggest improvements and discuss code changes, ensuring the code quality is maintained and providing a means of collaboration between group members.
 
 
 > If you’re familiar with version control branching strategies, will you adopt any particular strategy or workflow? (e.g., feature branches, main/dev workflow). 
