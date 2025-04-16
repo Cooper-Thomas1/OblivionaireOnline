@@ -21,11 +21,7 @@
 
 > Describe how the group will communicate throughout the project: Frequency of meetings (e.g., weekly; fortnightly; as needed); Meeting format (e.g., face-to-face; online via video calls or chat platforms); Preferred communication tools (e.g., Discord, Slack, MS Teams, email)
 
-We will meet weekly to discuss weekly updates, progress reports and adjusting our high-level approaches to the project in face-to-face meetings at UWA on Wednesday 
-mornings. As well as our weekly status updates, we will implement ad hoc emergency meetings through MS Teams as required when there are critical bugs and fixes required. 
-Our preferred communication tool is MS Teams where will discuss the bulk of the project.
-
-**UPDATE**: Our team will hold `weekly face-to-face` meetings at UWA on Wednesday mornings. These will allow us to provide weekly status updates, issues, challenges, etc. Our preferred communication tool, as well as any ad hoc emergency meetings will be hosted via `Microsoft Teams`, where requiref for critical bugs/fixed required. 
+Our team will hold `weekly face-to-face` meetings at UWA on Wednesday mornings. These will allow us to provide weekly status updates, issues, challenges, etc. As well as our weekly status updates, we will implement ad hoc emergency meetings through MS Teams as required when there are critical bugs and fixes required. Our preferred communication tool will be `Microsoft Teams`, where will discuss the bulk of the project.
 
 
 > Define how responsibilities will be allocated in phase 2. Who will be responsible for which tasks?
