@@ -1,6 +1,6 @@
 # CITS3007 Group Project – Phase 1 Report 
-**Group Name**: *Protectors of Privileges*\
-**Group Number**: *33*\
+**Group Name**: *TOC/TOUah*\
+**Group Number**: 33\
 **Date**: 16 Apr 2025
 
 ---
@@ -79,32 +79,51 @@ Good commit messages are important for maintaining a clear and understandable pr
 >List the common tools the group will use for implementation:
 Code editor or IDE (e.g., VS Code, JetBrains, Vim); Any additional tools for collaboration or efficiency (e.g., linters, debugging tools, CI/CD services). Explain why you made these choices.
 
-Visual Studio Code (`VSCode`) will be the standardised code editor where we will create our `C` programs. We selected `VSCode` due to its lightweight nature, cross-platform compatibility, and extensive extension ecosystem that supports C development, including syntax highlighting (via `IntelliSense`), integrated terminal, in-built `Git` integration, and debugging capabilities.
+**Visual Studio Code (VSCode)** will be the standardised code editor where we will create our C programs. We have selected **VSCode** due to its lightweight nature, cross-platform compatibility, and extensive extension ecosystem that supports C development, including syntax highlighting (via `IntelliSense`), integrated terminal, in-built `Git` integration, and debugging capabilities.
 
-For compiling and debugging, we will use the GCC compiler (for type errors) along with the `GDB debugger` (for logic errors). We have chosen to adopt a strict compiler configuration (see below) during the development and testing phases to enforce secure coding practices and to catch common sources of bugs early. This configuration enables a comprehensive set of warning flags and debugging options that align with secure `C` programming principles taught in the lectures and labs.
+For compiling and debugging, we will use the `gcc` compiler (for type errors) along with the `gdb` debugger (for logic errors). By utilising the **GCC toolchain**, we will perform compiliation using a robust `Makefile` that integrates extensive compiler warning and Google's sanitisers (e.g. AddressSanitizer and UndefinedBehaviourSanitizer).
+
+Compilation will using flags `-Wall`, `-Wextra`, `-Wshadow`, `-Wconversion`, to detect common sources of bugs early. Debugging is further enhanced using the flags `-ggdb3` and `fno-omit-frame-pointer` for meaningful stack traces. 
+
+We have chosen to adopt a strict compiler configuration (see below) during the development and testing phases to enforce secure coding practices. This configuration enables a comprehensive set of warning flags and debugging options that align with secure C programming principles taught in the lectures and labs.
 
 ```Makefile
-gcc -std=c11 -pedantic -Wall \
-	     -Wno-missing-braces -Wextra -Wno-missing-field-initializers \
-	     -Wformat=2 -Wswitch-default -Wswitch-enum -Wcast-align \
-	     -Wpointer-arith -Wbad-function-cast -Wstrict-overflow=5 \
-	     -Wstrict-prototypes -Winline -Wundef -Wnested-externs \
-	     -Wcast-qual -Wshadow -Wunreachable-code -Wlogical-op \
-	     -Wfloat-equal -Wstrict-aliasing=2 -Wredundant-decls \
-	     -Wold-style-definition -Werror \
-	     -ggdb3 \
-	     -O0 \
-	     -fno-omit-frame-pointer -ffloat-store \
-	     -fno-common -fstrict-aliasing \
-	     -lm
+# Compiler and tools
+CC      := gcc
+CFLAGS  := -std=c11 -pedantic -Wall -Wextra -Wshadow -Wconversion \
+           -Wno-unused-result -Wno-missing-field-initializers \
+           -Wformat=2 -Wswitch-default -Wswitch-enum -Wcast-align \
+           -Wpointer-arith -Wbad-function-cast -Wstrict-overflow=5 \
+           -Wstrict-prototypes -Winline -Wundef -Wnested-externs \
+           -Wcast-qual -Wunreachable-code -Wlogical-op \
+           -Wfloat-equal -Wstrict-aliasing=2 -Wredundant-decls \
+           -Wold-style-definition -Werror \
+           -ggdb3 -O0 -fno-omit-frame-pointer -fno-common -fstrict-aliasing \
+           -fsanitize=address,undefined -fno-sanitize-recover=all
+LDFLAGS := -fsanitize=address,undefined -lm -pthread
+
+# Programs to build
+PROGRAMS := {programA} {programB} {programC}
+OBJS     := $(PROGRAMS:%=%.o)
+
+# Default target
+all: $(PROGRAMS)
+
+# Compile each source file
+%.o: %.c
+	$(CC) $(CFLAGS) -c -o $@ $<
+
+# Link each program
+%: %.o
+	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
+
 ```
 
-*This was sourced from https://stackoverflow.com/questions/154630/recommended-gcc-warning-options-for-c as recommended in Lab 6*
+*This was adapted from https://stackoverflow.com/questions/154630/recommended-gcc-warning-options-for-c as recommended in Lab 6*
 
-Additionally, we will use GDB (GNU Debugger) for runtime debugging. GDB has been consistently used in CITS3007 labs, and all team members are familiar with its workflow. Its integration with VS Code allows for seamless breakpoints, step-through debugging, and variable inspection—crucial for diagnosing issues in low-level C code.
+Additionally, we will use **GDB (GNU Debugger)** for runtime debugging. GDB has been consistently used in CITS3007 labs, and all team members are familiar with its workflow. Its integration with VS Code allows for seamless breakpoints, step-through debugging, and variable inspection—crucial for diagnosing issues in low-level C code.
 
-We are also exploring the use of clang-tidy / cppcheck for static code analysis as our research into them suggests they are a highly useful tool for ensuring secure and safe code.
-
+Code quality will be maintained via `clang-tidy`, which is a static analyser which is used to identify potential errors, style violations, and best practice violations. This static analyser will be integrated into the `VSCode` environment of all our group members, as it should be already integrated via the `C/C++ extension`
 
 ---
 
@@ -123,6 +142,15 @@ conferring with each other before making such decisions and by having secure, un
 The use of **static code analysis tools** like splint will be relevant to our project as they help detect vulnerabilities and bad practices before runtime. It will be
 applied regularly during development to review code for security issues. The group will ensure effective use by making splint checks part of our coding workflow and
 reviewing any flagged warnings together.
+
+```
+1. POLP
+2. Static and Dynamic Code Analysers - Google Sanitiser,,,,
+3. Fuzzing
+4. Input Sanitisation -> prevent code injection
+5. Storing hashed passwords
+
+```
 
 ---
 
@@ -163,6 +191,6 @@ Code quality will be maintained by following the CERT C Secure Coding Standard, 
 ---
 
 ## 6. Group Name
-  **Group Name**: Protectors of Privileges
+  **Group Name**: TOC/TOUah
 
 
