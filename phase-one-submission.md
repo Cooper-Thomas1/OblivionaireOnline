@@ -48,13 +48,19 @@ Plan how to implement each task, discuss before we start writing code. Agile web
 We will ensure accountability and progress by doing weekly status reports in our team meetings where each member will give updates on what they’ve been working on in the last week as well as any   recurring problems that they may need extra support on. Furthermore, by utilising GitHub’s version control we can track all changes with a comprehensive history of what 
 changes were made, when they occurred and who implemented them.
 
+
+**UPDATE** Each week, team members will be accountable to doing `weekly status reports` in our team meetings. This is a space where each member can give updates on what they have been working on in the last week, as well as any problems encountered. 
+
+We will also be `GitHub` for version control, where we can track all changes with a comprehensive history of what changes were made, when they occurred, and who implemented them.
+
 ---
 
 ## 2. Version Control Strategy
 
 > Specify where the project’s source code will be hosted (e.g., GitHub, GitLab, Bitbucket). How will you handle merging members’ contributions?
 
-Our source code will be written in GitHub, and we will handle merges by ensuring all changes are approved in a code review by another group member before any changes to our code base are pushed. 
+Our source code will be written on `GitHub`, and we will handle merges by ensuring all changes are approved in a code review by another group member before any changes to our code base are pushed. 
+
 
 > If you’re familiar with version control branching strategies, will you adopt any particular strategy or workflow? (e.g., feature branches, main/dev workflow). Identify any version control policies (e.g., commit message conventions, review/approval process before merging).
 
