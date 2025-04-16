@@ -77,7 +77,13 @@ Each member will be assigned a particular section to work on and will create the
 
 To maintain uniformity in our project we will ensure that all commit messages specify three things; what was the change made, why was the change made and any potential improvements/problems still to be done. Furthermore, each push should be reviewed by at least one other group member before being pushed to main.
 
-**UPDATE** 
+**UPDATE** All changes undergo a peer review before merging. This can be done via a `pull request` that must be approved by at least two other group members before merging into `dev` or `main`. 
+
+We will follow consistent commit message convention:
+- What was changed
+- Why it was changed
+- Any remaining issues/future improvements
+
 
 ---
 
@@ -89,6 +95,8 @@ Code editor or IDE (e.g., VS Code, JetBrains, Vim); Any additional tools for col
 The standardised code editor where we will produce our C code within is VSCode as well as making use of several debuggers/linters including the gcc GNU debugger 
 specifically gcc -pedantic -Wall -Wextra -Wconversion -Wshadow my_program.c -o my_program when compiling our C code. We chose to use the gcc debugger as, in the lectures 
 and labs, it has proved to be an effective and trusted debugging tool, which we all have familiarity with and confidence in.
+
+**UPDATE** Google sanitisers. 
 
 ---
 
