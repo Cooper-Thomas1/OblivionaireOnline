@@ -167,7 +167,7 @@ A critical risk is the incorrect implementation of authentication or session han
 
 ### Insecure Password Handling  
 
-Storing or transmitting passwords insecurely is a serious security risk. To mitigate this, we will use functions designed for password hashing (such as `bcrypt`) to automatically handle the salting and hashing of passwords. We will also ensure that passwords meet basic security requirements, e.g. by specifying min length, special character inclusions. This mitigates **rainbow table** attacks.
+Storing or transmitting passwords insecurely is a serious security risk. To mitigate this, we will use functions designed for password hashing (such as `bcrypt`) to automatically handle the salting and hashing of passwords. 
 
 ### Validating user input  
 
@@ -191,7 +191,11 @@ Version control conflicts or tool inconsistencies could disrupt progress. To mit
 – Will the group follow a specific coding standard?
 – Will peer reviews, automated testing, or static analysis tools be used?
 
-Code quality will be maintained by following the CERT C Secure Coding Standard, which provides guidelines for secure and reliable coding practices in C particularly involving what to do in the case of integer/buffer overflow and uninitialized variables. We will also aim to align our style with Google’s C Style Guide. Peer reviews will be done manually from group members whenever changes are made to our code base using GitHub’s pull request capability. We will also use automated testing methods by creating unit tests using Unity, a popular and lightweight framework for C development. Furthermore, Clangs static analyser will be implemented in our code as well.
+Code quality will be maintained by following the **CERT C Secure Coding Standard**, which provides guidelines for secure and reliable coding practices in C particularly involving what to do in the case of integer/buffer overflow and uninitialised variables. We will also aim to align our style with **Google’s C Style Guide** to ensure consistency and readability of our group's codebase. 
+
+To maintain code integrity, **peer reviews** will be done manually from group members whenever changes are made to our codebase before merging into the main branch (using `GitHub` pull requests). This means the knowledge of functionality is shared in the group, and that the code quality is consistent throughout development. 
+
+We will also use **automated testing** by creating unit tests using `Unity`, a popular and lightweight framework for C development. Furthermore, **Clang's static analyser** will be implemented in our code as well. Both of these will detect potential bugs and security vulns, helping us maintain reliable and secure code.
 
 ---
 
