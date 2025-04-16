@@ -26,9 +26,9 @@ Our team will hold `weekly face-to-face` meetings at UWA on Wednesday mornings. 
 
 > Define how responsibilities will be allocated in phase 2. Who will be responsible for which tasks?
 
-Tasks will be assigned based on each member's strengths and preferences to encourage motivation and completion. These sections will be divided based on the project description, which appears to be divided into 4 sections. For example:
+Tasks will be assigned based on each member's strengths and preferences to encourage motivation and completion. These sections will be divided based on the project description, which is divided into 4 sections. For example:
 
-- **Cooper** - Team leader. In charge of submissions, coordination of group meetings, keeping track of the development of sections of work.
+- **Cooper** - Team leader. In charge of submissions, coordination of group meetings, keeping track of the development of sections of work. 
 - **Elke** - In charge of `Player authentication`
 - **Fin** - In charge `Session management`
 - **Marc** - In charge of `Role-based access control`
@@ -39,7 +39,7 @@ As a group we will plan how to implement each task and comprehensively discuss t
 
 > How will the group ensure accountability and track progress?
 
-Each week, team members will be accountable to doing `weekly status reports` in our team meetings. This is a space where each member can give updates on what they have been working on in the last week, as well as any problems encountered. We will also use `GitHub` for version control, where we can track all changes with a comprehensive history of what changes were made, when they occurred, and who implemented them.
+Each week, team members will be accountable to doing *weekly status reports* in our team meetings. This is a space where each member can give updates on what they have been working on in the last week, as well as any problems encountered. These features and changes will be logged via the `Issues` tabs, where any suggestions/improvements to the code can be contributed by group members.
 
 ---
 
@@ -47,7 +47,7 @@ Each week, team members will be accountable to doing `weekly status reports` in 
 
 > Specify where the project’s source code will be hosted (e.g., GitHub, GitLab, Bitbucket). How will you handle merging members’ contributions?
 
-Our source code will be written on `GitHub`, and we will handle merges by making sure each change is done using a pull request which guarantees all changes are approved in a code review by another group member before any changes to our code base are pushed. 
+We will use `GitHub` for version control, where we can track all changes with a comprehensive history of what changes were made, when they occurred, and who implemented them. We will handle merges by making sure each change is done via a `pull request`, which provides the opportunity for new feature's code to be reviewed. We will be aiming to have `pull requests` reviewed by two other group member before any changes to our code base are pushed. `Pull request` provide a structured way to review code, suggest changes, and to discuss code, ensuring code quality, and provides a means of collaboration between group members.
 
 
 > If you’re familiar with version control branching strategies, will you adopt any particular strategy or workflow? (e.g., feature branches, main/dev workflow). 
@@ -58,18 +58,19 @@ We will adopt a `main/dev` workflow, with feature specific branching within each
 - The `dev` branch will be the integration branch where feature branches are merged after testing
 - Each group member will create feature-specific branches based on assigned components (e.g. `feature/operation-access`). This structure helps reduce merge conflicts and allows us to work on the project simultaneously.
 
-We chose to use feature branching within dev branches as we believe it aligns better with the requirements of our clients needs and means that devs in the team can jump between features as necessary without interupting the workflowm of the project.
+We chose *feature branching* within the `dev` branch as we believe it aligns better with the requirements of our clients needs, and means that developerss in the team can jump between features as necessary without interupting the workflow of the project.
 
 
 > Identify any version control policies (e.g., commit message conventions, review/approval process before merging).
 
 All changes will undergo a peer review before merging. This can be done via a `pull request` that must be approved by at least two other group members before merging into `dev` or `main`. 
 
-We will follow consistent commit message convention:
+We will also follow consistent commit message convention:
 - What was changed
 - Why it was changed
 - Any remaining issues/future improvements
 
+Good commit messages are important for maintaining a clear and understandable project history, and will allow us (or other developers) to quickly see what changes were made and why. 
 
 ---
 
