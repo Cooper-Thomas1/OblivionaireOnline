@@ -26,7 +26,7 @@ Our team will hold `weekly face-to-face` meetings at UWA on Wednesday mornings. 
 
 > Define how responsibilities will be allocated in phase 2. Who will be responsible for which tasks?
 
-Tasks will be assigned based on each member's strengths and preferences to encourage motivation and completion. For example:
+Tasks will be assigned based on each member's strengths and preferences to encourage motivation and completion. These sections will be divided based on the project description, which appears to be divided into 4 sections. For example:
 
 - **Cooper** - Team leader. In charge of submissions, coordination of group meetings, keeping track of the development of sections of work.
 - **Elke** - In charge of `Player authentication`
