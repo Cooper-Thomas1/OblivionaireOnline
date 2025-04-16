@@ -27,20 +27,20 @@ Our preferred communication tool is MS Teams where will discuss the bulk of the 
 
 **UPDATE**: Our team will hold `weekly face-to-face` meetings at UWA on Wednesday mornings. These will allow us to provide weekly status updates, issues, challenges, etc. Our preferred communication tool, as well as any ad hoc emergency meetings will be hosted via `Microsoft Teams`, where requiref for critical bugs/fixed required. 
 
-> Define how responsibilities will be allocated in phase 2. Who will be responsible for which tasks?
 
+> Define how responsibilities will be allocated in phase 2. Who will be responsible for which tasks?
 
 We will fairly distribute tasks by aiming to assign them according to each members strengths and preferences. Specifically, Cooper will do …. 
 
 **UPDATE** Tasks will be assigned based on each member's strengths and preferences to encourage motivation and to completion. For examples:
 
-- **Cooper** - 
-- **Elke** - 
-- **Fin** - 
-- **Marc** - 
-- **Mika** - 
+- **Cooper** - Team leader. Is in charge of submissions, coordination of group meetings, keeping track of the development of sections of work.
+- **Elke** - In charge of `Player authentication`
+- **Fin** - In charge `Session management`
+- **Marc** - In charge of `Role-based access control`
+- **Mika** - In charge `Admin and operations access`
 
-
+Plan how to implement each task, discuss before we start writing code. Agile web dev framework. Some sections are dependent on the ones before to be completed, so coordination between group members will be needed to be facilitated (hence team leader).
 
 
 > How will the group ensure accountability and track progress?
