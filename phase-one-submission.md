@@ -3,8 +3,6 @@
 **Group Number**: 33\
 **Date**: 16 Apr 2025
 
----
-
 ## Group Members
 
 | Name | Student Number |
@@ -14,8 +12,6 @@
 | Fin O'Loughlin | 23616047 |
 | Marc Labouchardiere | 23857377 |
 | Mika Li | 24386354 |
-
----
 
 ## 1. Team Communication & Responsibilities
 
@@ -187,11 +183,11 @@ Version control conflicts or tool inconsistencies could disrupt progress. To mit
 
 As an overarching mitigation strategy, we have developed a project timelime with enough buffer room to accomodate for unforseen delays while still meeting the deadline.
 
-|                                          | Week 7                | Week 8                     | Study Break                                                                                                                                          | Week 9                                                                                                                                       | Week 10                                                                                                         | Week 11                                                                          |
-|------------------------------------------|-----------------------|----------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------|
-| Meeting                                  | 9am Wednesday         | 9am Wednesday              | 9am Wednesday                                                                                                                                        | 9am Wednesday                                                                                                                                | 9am Wednesday                                                                                                   | 9am Wednesday                                                                    |
-| Agenda                                   | - Plan report content | - Edit and finalise report | - Discuss details of phase 2<br>- Plan approach to each component and <br>  how they will work together<br>- Brainstorm potential issues/blind spots | - Discuss any issues we had with individual <br>assigned components<br>- Assist each other with the above<br>- Plan and start phase 2 report | - Edit and finalise phase 2 report<br>- Final checks of implementation<br>- Begin planning reflection (phase 3) | - Finalise presentation<br>- Finalise reflection<br>- Practice demo/presentation |
-| Tasks<br>Completed<br>Before <br>Meeting | - N/A                 | - Report Draft             | - Read through phase 2<br>- Begin brainstorming                                                                                                      | - Started phase 2                                                                                                                            | - Implementation and report                                                                                     | - Presentation and reflection                                                    |
+| **Week**                                  | **Week 7**            | **Week 8**                | **Study Break**                                                                                                                                    | **Week 9**                                                                                                                                | **Week 10**                                                                                                 | **Week 11**                                                                    |
+|-------------------------------------------|-----------------------|---------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------|
+| **Meeting**                               | 9am Wednesday         | 9am Wednesday             | 9am Wednesday                                                                                                                                     | 9am Wednesday                                                                                                                             | 9am Wednesday                                                                                              | 9am Wednesday                                                                 |
+| **Agenda**                                | - Plan report content | - Edit and finalise report | - Discuss details of phase 2<br>- Plan approach to each component and how they will work together<br>- Brainstorm potential issues/blind spots     | - Discuss any issues with individual assigned components<br>- Assist each other<br>- Plan and start phase 2 report                        | - Edit and finalise phase 2 report<br>- Final checks of implementation<br>- Begin planning reflection (phase 3) | - Finalise presentation<br>- Finalise reflection<br>- Practice demo/presentation |
+| **Tasks Completed Before Meeting**        | - N/A                 | - Report Draft            | - Read through phase 2<br>- Begin brainstorming                                                                                                   | - Started phase 2                                                                                                                         | - Implementation and report                                                                                  | - Presentation and reflection                                                  |
 
 ---
 
