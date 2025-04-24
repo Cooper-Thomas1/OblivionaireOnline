@@ -15,10 +15,11 @@ account_t *account_create(const char *userid, const char *plaintext_password,
                       )
 {
   // remove the contents of this function and replace it with your own code.
-  (void) userid;
-  (void) plaintext_password;
-  (void) email;
-  (void) birthdate;
+  account_t *new_account = malloc(sizeof(account_t));
+  if (new_account == NULL) {
+    fprintf(stderr, "Error: Memory allocation failed for new account.\n");
+    return NULL;
+  }
 
   return NULL;
 }
