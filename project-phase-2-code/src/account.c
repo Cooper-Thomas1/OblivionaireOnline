@@ -14,14 +14,31 @@ account_t *account_create(const char *userid, const char *plaintext_password,
                           const char *email, const char *birthdate
                       )
 {
-  // remove the contents of this function and replace it with your own code.
+  if (userid == NULL || plaintext_password == NULL || email == NULL || birthdate == NULL) {
+    fprintf(stderr, "Error: Invalid input parameters for account creation.\n");
+    return NULL;
+  }
+
   account_t *new_account = malloc(sizeof(account_t));
   if (new_account == NULL) {
     fprintf(stderr, "Error: Memory allocation failed for new account.\n");
     return NULL;
   }
 
-  return NULL;
+  memset(new_account, 0, sizeof(account_t)); // Zeros all values
+
+  strncpy(new_account->userid, userid, USER_ID_LENGTH - 1);
+  new_account->userid[USER_ID_LENGTH - 1] = '\0'; // Null termination
+
+  // need to call hashing function and set password.
+
+  strncpy(new_account->email, email, EMAIL_LENGTH - 1);
+  new_account->email[EMAIL_LENGTH - 1] = '\0';
+
+  strncpy(new_account->birthdate, birthdate, BIRTHDATE_LENGTH - 1);
+  new_account->birthdate[BIRTHDATE_LENGTH - 1] = '\0';
+
+  return new_account;
 }
 
 
