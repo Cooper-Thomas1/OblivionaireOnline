@@ -3,7 +3,6 @@
 #include <stdio.h>
 #include <time.h>
 #include <string.h>
-#include <stdio.h>
 #include <arpa/inet.h> 
 
 /**
