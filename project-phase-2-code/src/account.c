@@ -14,11 +14,6 @@ account_t *account_create(const char *userid, const char *plaintext_password,
                           const char *email, const char *birthdate
                       )
 {
-  if (userid == NULL || plaintext_password == NULL || email == NULL || birthdate == NULL) {
-    fprintf(stderr, "Error: Invalid input parameters for account creation.\n");
-    return NULL;
-  }
-
   account_t *new_account = malloc(sizeof(account_t));
   if (new_account == NULL) {
     fprintf(stderr, "Error: Memory allocation failed for new account.\n");
@@ -27,14 +22,25 @@ account_t *account_create(const char *userid, const char *plaintext_password,
 
   memset(new_account, 0, sizeof(account_t)); // Zeros all values
 
+  //assign userid
   strncpy(new_account->userid, userid, USER_ID_LENGTH - 1);
   new_account->userid[USER_ID_LENGTH - 1] = '\0'; // Null termination
 
   // need to call hashing function and set password.
+  
+  // Validate email
+  for (const char *p = email; *p != '\0'; p++) {
+    if (!isprint((unsigned char)*p) || isspace((unsigned char)*p)) {
+        fprintf(stderr, "Error: Invalid email format. Email must be ASCII printable and contain no spaces.\n");
+        free(new_account);
+        return NULL;
+    }
+  }
 
+  //assign email address
   strncpy(new_account->email, email, EMAIL_LENGTH - 1);
   new_account->email[EMAIL_LENGTH - 1] = '\0';
-
+  //assign birthdate
   strncpy(new_account->birthdate, birthdate, BIRTHDATE_LENGTH - 1);
   new_account->birthdate[BIRTHDATE_LENGTH - 1] = '\0';
 
@@ -43,9 +49,6 @@ account_t *account_create(const char *userid, const char *plaintext_password,
 
 
 void account_free(account_t *acc) {
-  if (acc == NULL) {
-    return;
-  }
   memset(acc, 0, sizeof(account_t)); // Zeros all values
   free(acc);
 }
