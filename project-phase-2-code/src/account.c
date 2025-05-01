@@ -41,6 +41,25 @@ account_t *account_create(const char *userid, const char *plaintext_password,
   strncpy(new_account->email, email, EMAIL_LENGTH - 1);
   new_account->email[EMAIL_LENGTH - 1] = '\0';
   //assign birthdate
+
+  //check if birthdate is valid
+  int year, month, day;
+  if (sscanf(birthdate, "%4d-%2d-%2d", &year, &month, &day) != 3 ||
+      year < 1900 || year > 2025 ||
+      month < 1 || month > 12) {
+    fprintf(stderr, "Error: Invalid birthdate format. Expected YYYY-MM-DD.\n");
+    free(new_account);
+    return NULL;
+  }
+
+  int days_in_month[] = { 31, (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0) ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
+  
+  if (day < 1 || day > days_in_month[month - 1]) {
+    fprintf(stderr, "Error: Invalid day for birthdate month.\n");
+    free(new_account);
+    return NULL;
+  }
+
   strncpy(new_account->birthdate, birthdate, BIRTHDATE_LENGTH - 1);
   new_account->birthdate[BIRTHDATE_LENGTH - 1] = '\0';
 
@@ -49,6 +68,9 @@ account_t *account_create(const char *userid, const char *plaintext_password,
 
 
 void account_free(account_t *acc) {
+  if (acc == NULL) {
+    return;
+  }
   memset(acc, 0, sizeof(account_t)); // Zeros all values
   free(acc);
 }
