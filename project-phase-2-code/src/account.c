@@ -5,6 +5,12 @@
 #include <string.h>
 #include <arpa/inet.h> 
 
+// Added for testing purposes
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+
 /**
  * Create a new account with the specified parameters.
  *
@@ -19,19 +25,67 @@ account_t *account_create(const char *userid, const char *plaintext_password,
                           const char *email, const char *birthdate
                       )
 {
-  // remove the contents of this function and replace it with your own code.
-  (void) userid;
-  (void) plaintext_password;
-  (void) email;
-  (void) birthdate;
+  account_t *new_account = malloc(sizeof(account_t));
+  if (new_account == NULL) {
+    fprintf(stderr, "Error: Memory allocation failed for new account.\n");
+    return NULL;
+  }
 
-  return NULL;
+  memset(new_account, 0, sizeof(account_t)); // Zeros all values
+
+  //assign userid
+  strncpy(new_account->userid, userid, USER_ID_LENGTH - 1);
+  new_account->userid[USER_ID_LENGTH - 1] = '\0'; // Null termination
+
+  // need to call hashing function and set password.
+  
+  // Validate email
+  for (const char *p = email; *p != '\0'; p++) {
+    if (!isprint((unsigned char)*p) || isspace((unsigned char)*p)) {
+        fprintf(stderr, "Error: Invalid email format. Email must be ASCII printable and contain no spaces.\n");
+        free(new_account);
+        return NULL;
+    }
+  }
+
+  //assign email address
+  strncpy(new_account->email, email, EMAIL_LENGTH - 1);
+  new_account->email[EMAIL_LENGTH - 1] = '\0';
+  //assign birthdate
+
+  //check if birthdate is valid
+  int year, month, day;
+  if (sscanf(birthdate, "%4d-%2d-%2d", &year, &month, &day) != 3 ||
+      year < 1900 || year > 2025 ||
+      month < 1 || month > 12) {
+    fprintf(stderr, "Error: Invalid birthdate format. Expected YYYY-MM-DD.\n");
+    free(new_account);
+    return NULL;
+  }
+
+  int days_in_month[] = { 31, (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0) ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
+  
+  if (day < 1 || day > days_in_month[month - 1]) {
+    fprintf(stderr, "Error: Invalid day for birthdate month.\n");
+    free(new_account);
+    return NULL;
+  }
+
+  strncpy(new_account->birthdate, birthdate, BIRTHDATE_LENGTH);
+
+  // NOTE: 1990-01-01 is 10 chars long, so would be 11 with null terminator.
+  new_account->birthdate[BIRTHDATE_LENGTH] = '\0';
+
+  return new_account;
 }
 
 
 void account_free(account_t *acc) {
-  // remove the contents of this function and replace it with your own code.
-  (void) acc;
+  if (acc == NULL) {
+    return;
+  }
+  memset(acc, 0, sizeof(account_t)); // Zeros all values
+  free(acc);
 }
 
 
