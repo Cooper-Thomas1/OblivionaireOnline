@@ -158,11 +158,8 @@ account_t *account_create(const char *userid, const char *plaintext_password,
     return NULL;
   }
 
-  strncpy(new_account->birthdate, birthdate, BIRTHDATE_LENGTH);
-
   // Store birthdate in YYYYMMDD format
-  snprintf(new_account->birthdate, BIRTHDATE_LENGTH, "%04d%02d%02d", year, month, day);
-  new_account->birthdate[BIRTHDATE_LENGTH - 1] = '\0';
+  snprintf(new_account->birthdate, BIRTHDATE_LENGTH, "%04d%02d%02d", year, month, day);   // Automatically null-terminated
 
   // Assign User ID
   strncpy(new_account->userid, userid, USER_ID_LENGTH - 1);
@@ -182,23 +179,29 @@ account_t *account_create(const char *userid, const char *plaintext_password,
 }
 
 /**
- * @brief Frees the memory allocated for an account structure.
+ * @brief Releases any memory associated with account_t structure.
  *
  * This function deallocates the memory used by the account structure and sets the pointer to NULL.
  * It also zeroes out the contents of the structure before freeing it to ensure sensitive information
  * is not left in memory.
- *
+ * 
+ * In some cases, memset() can be optimised away by the compiler,
+ * So it is important to use functions like explicit_bzero() that are 
+ * guaranteed to not be optimised away, to securely erase memory.
+ * 
  * @param acc A pointer to the account structure to be freed. Must not be NULL.
  *
  * @return NULL after freeing the account structure.
  */
 void account_free(account_t *acc) {
   if (acc == NULL) {
+    log_message(LOG_WARN, "Attempted to free a NULL account pointer.");
     return;
   }
-  memset(acc, 0, sizeof(account_t)); // Zeros all values
+  // Securely erase memory
+  explicit_bzero(acc, sizeof(account_t)); // Zeros all values
   free(acc);
-  return;
+  log_message(LOG_INFO, "Account memory freed successfully.");
 }
 
 

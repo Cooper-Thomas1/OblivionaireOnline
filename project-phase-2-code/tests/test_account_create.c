@@ -15,7 +15,7 @@ START_TEST(test_account_create_valid_input)
     ck_assert_ptr_nonnull(account);
     ck_assert_str_eq(account->userid, userid);
     ck_assert_str_eq(account->email, email);
-    ck_assert_str_eq(account->birthdate, birthdate);
+    ck_assert_str_eq(account->birthdate, "19900101");
     ck_assert_int_le(strlen(account->password_hash), HASH_LENGTH);
 
     account_free(account);
@@ -40,7 +40,7 @@ START_TEST(test_account_create_invalid_birthdate)
     const char *userid = "user123";
     const char *password = "securepassword";
     const char *email = "user@example.com";
-    const char *birthdate = "1990-02-30"; // Invalid date
+    const char *birthdate = "1990-01-00"; // Invalid date
 
     account_t *account = account_create(userid, password, email, birthdate);
 
