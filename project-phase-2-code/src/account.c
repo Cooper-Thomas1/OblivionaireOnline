@@ -60,10 +60,6 @@ account_t *account_create(const char *userid, const char *plaintext_password,
   // Zero all values
   memset(new_account, 0, sizeof(account_t)); 
 
-  // Assign userid
-  strncpy(new_account->userid, userid, USER_ID_LENGTH - 1);
-  new_account->userid[USER_ID_LENGTH - 1] = '\0'; // Null termination
-
   /** Hash password using Argon2
   * Reference: Password hashing API - Libsodium documentation
   * https://doc.libsodium.org/password_hashing/default_phf
@@ -73,6 +69,9 @@ account_t *account_create(const char *userid, const char *plaintext_password,
   * 
   * FROM https://doc.libsodium.org/internals:
   * "On POSIX systems, everything in libsodium is guaranteed to be thread-safe."
+  * 
+  * @rubric: The password must be hashed securely (see Section 3.4, “Password handling”)
+  * 
   */
 
   // Initialise sodium library
@@ -104,85 +103,102 @@ account_t *account_create(const char *userid, const char *plaintext_password,
   new_account->password_hash[HASH_LENGTH - 1] = '\0'; // Null termination
 
 
-  /** Validate email
-  * Reference: POSIX regex library
-  * https://pubs.opengroup.org/onlinepubs/9699919799/functions/regcomp.html
-  * 
-  * regcomp() - compile a regular expression (is MT-Safe locale = thread-safe as long as the regex_t object is not shared between threads)
-  * regexec() - execute a regular expression (is MT-Safe locale = thread-safe as long as the regex_t object is not shared between threads)
-  * regfree() - free memory allocated to the compiled regex object (is MT-Safe locale = thread-safe)
-  * 
-  */
-
-  regex_t regex;
-  
-  // Compile the regex before using it.
-  int reti = regcomp(&regex, EMAIL_REGEX, REG_EXTENDED);
-  if (reti != 0) {
-    log_message(LOG_ERROR, "Could not compile regex");
-    account_free(new_account);
-    return NULL;
-  }
-
-  // Run regex on the email param.
-  if (regexec(&regex, email, 0, NULL, 0) != 0) {
-    // email does not match the regex pattern.
-    log_message(LOG_ERROR, "Invalid email format.");
-    regfree(&regex);
-    account_free(new_account);
-    return NULL;
-  }
-
-  // Free regex
-  regfree(&regex);
+  /** Validate email 
+   *
+   * @rubric: "...A basic check should be performed on the email: it should
+   *          consist only of ASCII, printable characters (according to the C standard) and must not contain
+   *          any spaces. (Other portions of the system will require the user to verify that they can read
+   *          messages sent to that email address.)"
+   */
 
   // Validate email
-  // for (const char *p = email; *p != '\0'; p++) {
-  //   if (!isprint((unsigned char)*p) || isspace((unsigned char)*p)) {
-  //       fprintf(stderr, "Error: Invalid email format. Email must be ASCII printable and contain no spaces.\n");
-  //       free(new_account);
-  //       return NULL;
-  //   }
-  // }
+  for (const char *p = email; *p != '\0'; p++) {
+    if (!isprint((unsigned char)*p) || isspace((unsigned char)*p)) {
+        log_message(LOG_ERROR, "Invalid email format. Email must be ASCII printable and contain no spaces.");
+        account_free(new_account);
+        return NULL;
+    }
+  }
 
-  //assign email address
+  // Assign email address
   strncpy(new_account->email, email, EMAIL_LENGTH - 1);
   new_account->email[EMAIL_LENGTH - 1] = '\0';
-  //assign birthdate
 
-  //check if birthdate is valid
+
+  /** Validate birthdate
+   * 
+   * @brief: The birthdate must be in the format YYYY-MM-DD. 
+   * 
+   * The new_account->birthdate field is a string of length BIRTHDATE_LENGTH. 
+   * By default, this is 10, thus the birthdate string must be 9 characters long + `\0` terminator.
+   * new_account->birthdate @format: YYYYMMDD (without dashes).
+   *
+   * @rubric: The birthdate must be validated to ensure it is a valid date 
+   *         in the correct format (YYYY-MM-DD). The year must be within 
+   *         a reasonable range (e.g., 1900-2025), and the day must be 
+   *         valid for the given month, accounting for leap years.
+   */
+
+  // Check if birthdate is valid
   int year, month, day;
   if (sscanf(birthdate, "%4d-%2d-%2d", &year, &month, &day) != 3 ||
-      year < 1900 || year > 2025 ||
-      month < 1 || month > 12) {
-    fprintf(stderr, "Error: Invalid birthdate format. Expected YYYY-MM-DD.\n");
-    free(new_account);
+    year < 1900 || year > 2025 ||
+    month < 1 || month > 12) {
+    // Invalid format or out of range
+    log_message(LOG_ERROR, "Invalid birthdate format. Expected YYYY-MM-DD.");
+    account_free(new_account);
     return NULL;
   }
 
   int days_in_month[] = { 31, (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0) ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
   
   if (day < 1 || day > days_in_month[month - 1]) {
-    fprintf(stderr, "Error: Invalid day for birthdate month.\n");
-    free(new_account);
+    log_message(LOG_ERROR, "Invalid day for birthdate month.");
+    account_free(new_account);
     return NULL;
   }
 
   strncpy(new_account->birthdate, birthdate, BIRTHDATE_LENGTH);
 
-  // NOTE: 1990-01-01 is 10 chars long, so would be 11 with null terminator.
-  new_account->birthdate[BIRTHDATE_LENGTH] = '\0';
+  // Store birthdate in YYYYMMDD format
+  snprintf(new_account->birthdate, BIRTHDATE_LENGTH, "%04d%02d%02d", year, month, day);
+  new_account->birthdate[BIRTHDATE_LENGTH - 1] = '\0';
 
+  // Assign User ID
+  strncpy(new_account->userid, userid, USER_ID_LENGTH - 1);
+  new_account->userid[USER_ID_LENGTH - 1] = '\0'; // Null termination
+
+  // Set default values for other fields
+  new_account->unban_time = 0;
+  new_account->expiration_time = 0;
+  new_account->login_count = 0;
+  new_account->login_fail_count = 0;
+  new_account->last_login_time = 0;
+  new_account->last_ip = 0;
+
+  // Log account creation success
+  log_message(LOG_INFO, "Account created successfully for user: %s", new_account->userid);    // DEBUG
   return new_account;
 }
 
-
+/**
+ * @brief Frees the memory allocated for an account structure.
+ *
+ * This function deallocates the memory used by the account structure and sets the pointer to NULL.
+ * It also zeroes out the contents of the structure before freeing it to ensure sensitive information
+ * is not left in memory.
+ *
+ * @param acc A pointer to the account structure to be freed. Must not be NULL.
+ *
+ * @return NULL after freeing the account structure.
+ */
 void account_free(account_t *acc) {
   if (acc == NULL) {
     return;
   }
   memset(acc, 0, sizeof(account_t)); // Zeros all values
   free(acc);
+  return;
 }
 
 
