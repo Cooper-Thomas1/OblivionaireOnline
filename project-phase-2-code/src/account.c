@@ -34,6 +34,18 @@ account_t *account_create(const char *userid, const char *plaintext_password,
                           const char *email, const char *birthdate
                       )
 {
+  /* FUNCTION PROPOSED DESIGN:
+  // Validate input params for NULL, emptry string;
+  // Allocate memory for new_acc struct, check for fail (NULL);
+  // Initialise all fields -> 0;
+  // Copy and validate userid;
+  // hash password (via Argon2) -> set password_hash;
+  // Validate email -> set email;
+  // Validate birth date -> set birthdate;
+  // Set default values for other fields unban_time, expiration_time, login_count, login_fail_count, last_login_time, last_ip;
+  // Return pointer new_acc struct; 
+  */
+
   // Allocate memory for the new account struct
   account_t *new_account = malloc(sizeof(account_t));
   if (new_account == NULL) {
