@@ -1,5 +1,11 @@
 #include "account.h"
 
+// Added for testing purposes
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+
 /**
  * Create a new account with the specified parameters.
  *
@@ -60,8 +66,10 @@ account_t *account_create(const char *userid, const char *plaintext_password,
     return NULL;
   }
 
-  strncpy(new_account->birthdate, birthdate, BIRTHDATE_LENGTH - 1);
-  new_account->birthdate[BIRTHDATE_LENGTH - 1] = '\0';
+  strncpy(new_account->birthdate, birthdate, BIRTHDATE_LENGTH);
+
+  // NOTE: 1990-01-01 is 10 chars long, so would be 11 with null terminator.
+  new_account->birthdate[BIRTHDATE_LENGTH] = '\0';
 
   return new_account;
 }
