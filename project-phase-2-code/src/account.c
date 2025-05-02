@@ -4,27 +4,37 @@
 #include <time.h>
 #include <string.h>
 #include <arpa/inet.h> 
-
-// Added for testing purposes
 #include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
 #include <ctype.h>
 
 /**
- * Create a new account with the specified parameters.
+ * @brief Creates a new user account with the specified parameters.
  *
- * This function initializes a new dynamically allocated account structure
- * with the given user ID, hash information derived from the specified plaintext password, email address,
- * and birthdate. Other fields are set to their default values.
+ * This function initialises a dynamically allocated account structure with the given user ID, 
+ * hashed password, email address, and birthdate. Other fields are set to their default values.
+ * The password is securely hashed, and the caller is responsible for freeing the allocated memory 
+ * using `account_free`.
  *
- * On success, returns a pointer to the newly created account structure.
- * On error, returns NULL and logs an error message.
+ * @param userid A valid, null-terminated string representing the user ID. Must not be NULL.
+ * @param plaintext_password A valid, null-terminated string representing the plaintext password. Must not be NULL.
+ * @param email A valid, null-terminated string representing the email address. Must not be NULL. 
+ *              The email must consist only of ASCII printable characters and must not contain spaces.
+ * @param birthdate A valid, null-terminated string representing the birthdate in the format YYYY-MM-DD. Must not be NULL.
+ *
+ * @pre All arguments must be valid, null-terminated strings.
+ * @pre None of the pointers may be NULL.
+ *
+ * @return A pointer to the newly created account structure on success, or NULL on error.
+ *         On error, an appropriate error message is logged using `log_message`.
+ *
+ * @note The birthdate is validated to ensure it is in the correct format and represents a valid date.
+ *       The email undergoes basic validation to ensure it meets the specified criteria.
  */
 account_t *account_create(const char *userid, const char *plaintext_password,
                           const char *email, const char *birthdate
                       )
 {
+  // Allocate memory for the new account struct
   account_t *new_account = malloc(sizeof(account_t));
   if (new_account == NULL) {
     fprintf(stderr, "Error: Memory allocation failed for new account.\n");
