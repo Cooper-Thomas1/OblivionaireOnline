@@ -7,9 +7,6 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <sodium.h> // dependency for password hashing
-#include <regex.h>
-
-#define EMAIL_REGEX "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$" 
 
 /**
  * @brief Creates a new user account with the specified parameters.
