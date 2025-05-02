@@ -16,6 +16,7 @@ START_TEST(test_account_create_valid_input)
     ck_assert_str_eq(account->userid, userid);
     ck_assert_str_eq(account->email, email);
     ck_assert_str_eq(account->birthdate, birthdate);
+    ck_assert_int_le(strlen(account->password_hash), HASH_LENGTH);
 
     account_free(account);
 }

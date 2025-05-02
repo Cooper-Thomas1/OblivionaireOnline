@@ -1,8 +1,8 @@
 CC = gcc
 CFLAGS = -Wall -Wextra
-LDFLAGS = -lcheck -lm -lpthread -lrt -lsubunit
+LDFLAGS = -lcheck -lm -lpthread -lrt -lsubunit -lsodium
 TARGET = test_account_create.exe
-SOURCES = test_account_create.c ../src/account.c
+SOURCES = test_account_create.c ../src/account.c ../src/account.c ../src/stubs.c
 OBJECTS = $(SOURCES:.c=.o)
 
 all: $(TARGET)
