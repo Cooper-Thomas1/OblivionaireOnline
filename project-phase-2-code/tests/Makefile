@@ -36,11 +36,21 @@ $(BUILD_DIR):
 
 # Run tests
 test: all
+	@summary=""
 	@for test in $(TEST_BINS); do \
+		echo "------------------------------------------------------------"; \
 		echo "Running $$test..."; \
-		$$test || exit 1; \
-	done
-	@echo "All tests passed!"
+		if $$test; then \
+			summary="$${summary}."; \
+		else \
+			summary="$${summary}E"; \
+		fi; \
+	done; \
+	echo "------------------------------------------------------------"; \
+	echo "Test Summary: $$summary"; \
+	if echo "$$summary" | grep -q "E"; then \
+		exit 1; \
+	fi
 
 # Clean build directory
 clean:
