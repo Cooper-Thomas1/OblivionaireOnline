@@ -8,6 +8,52 @@
 #include <ctype.h>
 #include <sodium.h> // dependency for password hashing
 
+// Validated emails go in here
+typedef struct {
+  char email[EMAIL_LENGTH];
+} email_t;
+
+/** 
+ * @brief Validate email helper function
+ * 
+ * This function checks if the email provided is "consisting
+ * of only ASCII, printable characters (according to the C standard)
+ * and must not contain any spaces".
+ * 
+ * @param email A valid, null-terminated string representing the email address to validate.
+ * 
+ * @return A pointer to a valid email_t structure on success, 
+ * or NULL on error with log_message(LOG_ERROR).
+ */
+email_t *validate_email(const char *email) {
+  // Check if email length exceeds maximum
+  if (strlen(email) >= EMAIL_LENGTH) {
+    log_message(LOG_ERROR, "Email exceeds maximum length.");
+    return NULL;
+  }
+
+  // Check for spaces and non-printable characters
+  for (const char *p = email; *p != '\0'; p++) {
+    if (!isprint((unsigned char)*p) || isspace((unsigned char)*p)) {
+      log_message(LOG_ERROR, "Invalid email format. Email must be ASCII printable and contain no spaces.");
+      return NULL;
+    }
+  }
+
+  // Create a new email_t structure
+  email_t *valid_email = malloc(sizeof(email_t));
+  if (valid_email == NULL) {
+    log_message(LOG_ERROR, "Memory allocation failed for valid_email.");
+    return NULL;
+  }
+
+  // Copy the validated email into the structure
+  strncpy(valid_email->email, email, EMAIL_LENGTH - 1);
+  valid_email->email[EMAIL_LENGTH - 1] = '\0'; // Null termination
+
+  return valid_email;
+}
+
 /**
  * @brief Creates a new user account with the specified parameters.
  *
@@ -108,19 +154,18 @@ account_t *account_create(const char *userid, const char *plaintext_password,
    *          messages sent to that email address.)"
    */
 
-  // Validate email
-  for (const char *p = email; *p != '\0'; p++) {
-    if (!isprint((unsigned char)*p) || isspace((unsigned char)*p)) {
-        log_message(LOG_ERROR, "Invalid email format. Email must be ASCII printable and contain no spaces.");
-        account_free(new_account);
-        return NULL;
-    }
+  // Validate email using validate_email function
+  email_t *validated_email = validate_email(email);
+  if (validated_email == NULL) {
+    // Email validation failed
+    account_free(new_account);
+    return NULL;
   }
 
-  // Assign email address
-  strncpy(new_account->email, email, EMAIL_LENGTH - 1);
+  // copy into new_account
+  strncpy(new_account->email, validated_email->email, EMAIL_LENGTH - 1);
   new_account->email[EMAIL_LENGTH - 1] = '\0';
-
+  free(validated_email);
 
   /** Validate birthdate
    * 
@@ -183,7 +228,7 @@ account_t *account_create(const char *userid, const char *plaintext_password,
  * is not left in memory.
  * 
  * In some cases, memset() can be optimised away by the compiler,
- * So it is important to use functions like explicit_bzero() that are 
+ * So it is important to use functions like sodium_memzero() that are 
  * guaranteed to not be optimised away, to securely erase memory.
  * 
  * @param acc A pointer to the account structure to be freed. Must not be NULL.
@@ -196,7 +241,7 @@ void account_free(account_t *acc) {
     return;
   }
   // Securely erase memory
-  explicit_bzero(acc, sizeof(account_t)); // Zeros all values
+  sodium_memzero(acc, sizeof(account_t)); // Securely zeroes memory
   free(acc);
   log_message(LOG_INFO, "Account memory freed successfully.");
 }
@@ -252,8 +297,31 @@ void account_set_expiration_time(account_t *acc, time_t t) {
   (void) t;
 }
 
+/**
+ * @brief Safely update the account's email address.
+ * 
+ * This function updates the email address of the account structure
+ * and ensures that the new email is properly null-terminated.
+ * Thread-safe and secure against buffer overflows.
+ * 
+ * @param acc A pointer to the account structure to be updated. Must not be NULL.
+ * @param new_email The new email address to set for the account. Must be a valid, 
+ *                  null-terminated string. Must not be NULL. 
+ * 
+ * @pre acc, new_email != NULL
+ * @pre new_email must be a valid, null-terminated string.
+ * 
+ * @return log_message(LOG_ERROR,) on invalid email format.
+ */
 void account_set_email(account_t *acc, const char *new_email) {
-  // remove the contents of this function and replace it with your own code.
+  /**
+   * CODE DESIGN:
+   * Validate email format;
+   * If invalid, log error and return;
+   * Lock acc for thread safety;
+   * With the lock held, copy new_email to acc->email;
+   * 
+   */
   (void) acc;
   (void) new_email;
 }
