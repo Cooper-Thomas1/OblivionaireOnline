@@ -116,6 +116,8 @@ void account_record_login_success(account_t *acc, ip4_addr_t ip) {
 }
 
 void account_record_login_failure(account_t *acc) {
+  acc->login_count = 0;
+  
   if (acc->login_fail_count < UINT_MAX) {
     acc->login_fail_count += 1;
   }
