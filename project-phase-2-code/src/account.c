@@ -93,14 +93,12 @@ account_t *account_create(const char *userid, const char *plaintext_password,
   * Return pointer new_acc struct; 
   */
 
-  // Allocate memory for the new account struct
   account_t *new_account = malloc(sizeof(account_t));
   if (new_account == NULL) {
     log_message(LOG_ERROR, "Memory allocation failed for new account.");
     return NULL;
   }
 
-  // Zero all values
   memset(new_account, 0, sizeof(account_t)); 
 
   /** Hash password using Argon2
@@ -119,13 +117,11 @@ account_t *account_create(const char *userid, const char *plaintext_password,
 
   // Initialise sodium library
   if (sodium_init() < 0) {
-    // Initalisation faield
     log_message(LOG_ERROR, "Failed to initialise the sodium library.");
     account_free(new_account);
     return NULL;
   }
 
-  // Use Argon2id for hashing
   char buf[HASH_LENGTH];
   if (crypto_pwhash_str_alg(
     buf,                                  // Output buffer for hash
@@ -135,16 +131,13 @@ account_t *account_create(const char *userid, const char *plaintext_password,
     crypto_pwhash_MEMLIMIT_INTERACTIVE,   // Memory cost, safe default
     crypto_pwhash_ALG_ARGON2ID13          // alogorithm: Argon2id v1.3
   ) != 0) {
-    // Hashing failed
     log_message(LOG_ERROR, "Password hashing failed.");
     account_free(new_account);
     return NULL;
   }
 
-  // Copy the hashed password to the account struct
   strncpy(new_account->password_hash, buf, HASH_LENGTH - 1);
-  new_account->password_hash[HASH_LENGTH - 1] = '\0'; // Null termination
-
+  new_account->password_hash[HASH_LENGTH - 1] = '\0'; 
 
   /** Validate email 
    *
@@ -154,15 +147,12 @@ account_t *account_create(const char *userid, const char *plaintext_password,
    *          messages sent to that email address.)"
    */
 
-  // Validate email using validate_email function
   email_t *validated_email = validate_email(email);
   if (validated_email == NULL) {
-    // Email validation failed
     account_free(new_account);
     return NULL;
   }
 
-  // copy into new_account
   strncpy(new_account->email, validated_email->email, EMAIL_LENGTH - 1);
   new_account->email[EMAIL_LENGTH - 1] = '\0';
   free(validated_email);
@@ -186,7 +176,6 @@ account_t *account_create(const char *userid, const char *plaintext_password,
   if (sscanf(birthdate, "%4d-%2d-%2d", &year, &month, &day) != 3 ||
     year < 1900 || year > 2025 ||
     month < 1 || month > 12) {
-    // Invalid format or out of range
     log_message(LOG_ERROR, "Invalid birthdate format. Expected YYYY-MM-DD.");
     account_free(new_account);
     return NULL;
@@ -200,23 +189,17 @@ account_t *account_create(const char *userid, const char *plaintext_password,
     return NULL;
   }
 
-  // Store birthdate in YYYYMMDD format
-  snprintf(new_account->birthdate, BIRTHDATE_LENGTH, "%04d%02d%02d", year, month, day);   // Automatically null-terminated
+  snprintf(new_account->birthdate, BIRTHDATE_LENGTH, "%04d%02d%02d", year, month, day);  
 
-  // Assign User ID
   strncpy(new_account->userid, userid, USER_ID_LENGTH - 1);
-  new_account->userid[USER_ID_LENGTH - 1] = '\0'; // Null termination
+  new_account->userid[USER_ID_LENGTH - 1] = '\0';
 
-  // Set default values for other fields
   new_account->unban_time = 0;
   new_account->expiration_time = 0;
   new_account->login_count = 0;
   new_account->login_fail_count = 0;
   new_account->last_login_time = 0;
   new_account->last_ip = 0;
-
-  // Log account creation success
-  log_message(LOG_INFO, "Account created successfully for user: %s", new_account->userid);    // DEBUG
   return new_account;
 }
 
@@ -240,7 +223,6 @@ void account_free(account_t *acc) {
     log_message(LOG_WARN, "Attempted to free a NULL account pointer.");
     return;
   }
-  // Securely erase memory
   sodium_memzero(acc, sizeof(account_t)); // Securely zeroes memory
   free(acc);
   log_message(LOG_INFO, "Account memory freed successfully.");
