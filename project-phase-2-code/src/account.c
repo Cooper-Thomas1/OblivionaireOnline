@@ -237,7 +237,7 @@ account_t *account_create(const char *userid, const char *plaintext_password,
   new_account->login_fail_count = 0;
   new_account->last_login_time = 0;
   new_account->last_ip = 0;
-  
+
   return new_account;
 }
 
@@ -285,12 +285,11 @@ void account_free(account_t *acc) {
 bool account_validate_password(const account_t *acc, const char *plaintext_password) {
   /**
    * CODE DESIGN:
-   * Hash plaintext password
-   * Verify a valid password is stored in acc->password_hash
+   * Hash plaintext password (done in crypto_pwhash_str_verify)
+   * Verify a valid password is stored in acc->password_hash (done in crypto_pwhash_str_verify)
    * Lock account (thread-safety)
-   * Compare to hash on file -> true if same, false if not
+   * Compare to hash on file -> return true if same, false if not (done in crypto_pwhash_str_verify)
    * Unlock account mutex
-   * Release any used memory
    */
 
   int result = 0;
@@ -303,13 +302,40 @@ bool account_validate_password(const account_t *acc, const char *plaintext_passw
   return result == 0;
 }
 
+/**
+ * @brief Hash a new password and update the account accordingly.
+ * 
+ * This is similar in structure to account_validate_password,
+ * but involves generating a new hash instead of comparing one.
+ * Sets hashed password record derived from new plaintext password.
+ * 
+ * @param acc The account where the password is being updated.
+ * @param new_plaintext_password The password to be hashed and updated.
+ * 
+ * @pre acc and new_plaintext_password must not be NULL.
+ * @pre new_plaintext password must be a valid, null-terminated string.
+ * 
+ * @return true on success, false on failure
+ */
 bool account_update_password(account_t *acc, const char *new_plaintext_password) {
-  // remove the contents of this function and replace it with your own code.
-  // set hashed password record derived from new plaintext password.
-  // returns true on success, false on failure
-  (void) acc;
-  (void) new_plaintext_password;
-  return false;
+  /**
+   * CODE DESIGN:
+   * Hash new plaintext password using hash_password, push into validated_hash struct
+   * Erase old hash using secure library call sodium_memzero() for acc->hash_password
+   * safely write in new hash
+   * return true
+   */
+
+  pwhash_t *new_hashed_pw = hash_password(new_plaintext_password);
+  if (!(new_hashed_pw)) {
+    return false;
+  }
+
+  sodium_memzero(acc->password_hash, HASH_LENGTH);    // Erase old pw 
+  safe_strcpy(acc->password_hash, new_hashed_pw->hash, HASH_LENGTH);
+  free(new_hashed_pw);
+
+  return true;
 }
 
 void account_record_login_success(account_t *acc, ip4_addr_t ip) {
