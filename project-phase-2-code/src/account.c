@@ -70,6 +70,95 @@ email_t *validate_email(const char *email) {
   return valid_email;
 }
 
+// Generated hashes go in here
+typedef struct {
+  char hash[HASH_LENGTH];
+} pwhash_t;
+
+/**
+ * @brief Hashes the provided password using libsodium library (Argon2)
+ * 
+ * Reference: Password hashing API - Libsodium documentation
+ * @ref https://doc.libsodium.org/password_hashing/default_phf
+ * "On POSIX systems, everything in libsodium is guaranteed to be thread-safe."
+ *
+ * @param pw The plaintext password to be hashed.
+ * 
+ * @return NULL on fail to hash (with log_message(LOG_ERROR)), else pwhash_t valid_hash. 
+ * 
+ */
+pwhash_t *hash_password(const char* pw) {
+  // Initialise sodium library
+  if (sodium_init() < 0) {
+    log_message(LOG_ERROR, "Failed to initialise the sodium library.");
+    return NULL;
+  }
+
+  pwhash_t *valid_hash = malloc(sizeof(pwhash_t));
+  if (valid_hash == NULL) {
+    log_message(LOG_ERROR, "Failed to allocate memory for password hash.");
+    return NULL;
+  }
+
+
+  if (crypto_pwhash_str_alg(
+    valid_hash->hash,                     // Output buffer for hash
+    pw,                                   // password to hash from param
+    strlen(pw),                           // Length of password 
+    crypto_pwhash_OPSLIMIT_INTERACTIVE,   // CPU cost, safe default
+    crypto_pwhash_MEMLIMIT_INTERACTIVE,   // Memory cost, safe default
+    crypto_pwhash_ALG_ARGON2ID13          // alogorithm: Argon2id v1.3
+  ) != 0) {
+    log_message(LOG_ERROR, "Password hashing failed.");
+    free(valid_hash);
+    return NULL;
+  }
+
+  return valid_hash;
+}
+
+typedef struct {
+  char date[BIRTHDATE_LENGTH];
+} birthdate_t;
+
+/** 
+ * @brief: Check if birthdate is valid. The birthdate must be in the format YYYY-MM-DD. 
+ *
+ * The birthdate must be validated to ensure it is a valid date 
+ * in the correct format (YYYY-MM-DD). The year must be within 
+ * reasonable range (e.g., 1900-2025), and the day must be 
+ * valid for the given month, accounting for leap years.
+ * 
+ * @param bday in format YYYY-MM-DD to be validated.
+ * 
+ * @return birthdate_t in format YYYYMMDD (without dashes), or NULL on error.
+ */
+birthdate_t *validate_birthdate(const char *bday) {  
+  int year, month, day;
+  if (sscanf(bday, "%4d-%2d-%2d", &year, &month, &day) != 3 ||
+    year < 1900 || year > 2025 ||
+    month < 1 || month > 12) {
+    log_message(LOG_ERROR, "Invalid birthdate format. Expected YYYY-MM-DD.");
+    return NULL;
+  }
+  
+  int days_in_month[] = { 31, (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0) ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
+  
+  if (day < 1 || day > days_in_month[month - 1]) {
+    log_message(LOG_ERROR, "Invalid day for birthdate month.");
+    return NULL;
+  }
+
+  birthdate_t *valid_bday = malloc(sizeof(birthdate_t));
+  if (valid_bday == NULL) {
+    log_message(LOG_ERROR, "Failed to malloc space for valid bday.");
+    return NULL;
+  }  
+
+  snprintf(valid_bday->date, BIRTHDATE_LENGTH, "%04d%02d%02d", year, month, day); // YYYYMMDD format
+  return valid_bday;
+}
+
 
 /**
  * @brief Creates a new user account with the specified parameters.
@@ -110,103 +199,36 @@ account_t *account_create(const char *userid, const char *plaintext_password,
   * Return pointer new_acc struct; 
   */
 
-
   account_t *new_account = malloc(sizeof(account_t));
   if (new_account == NULL) {
     log_message(LOG_ERROR, "Memory allocation failed for new account.");
     return NULL;
   }
-
   memset(new_account, 0, sizeof(account_t)); 
 
-  /** Hash password using Argon2
-  * Reference: Password hashing API - Libsodium documentation
-  * https://doc.libsodium.org/password_hashing/default_phf
-  * 
-  * sodium_init() - Initialise the sodium library (is MT-Safe. Must be called before any other function.)
-  * crypto_pwhash_str_alg() - Hash the password using Argon2id algorithm (is MT-Safe)
-  * 
-  * FROM https://doc.libsodium.org/internals:
-  * "On POSIX systems, everything in libsodium is guaranteed to be thread-safe."
-  * 
-  * @rubric: The password must be hashed securely (see Section 3.4, “Password handling”)
-  * 
-  */
-
-  // Initialise sodium library
-  if (sodium_init() < 0) {
-    log_message(LOG_ERROR, "Failed to initialise the sodium library.");
+  pwhash_t *hashed_password = hash_password(plaintext_password);
+  if (hashed_password == NULL) {
     account_free(new_account);
     return NULL;
   }
-
-  char buf[HASH_LENGTH];
-  if (crypto_pwhash_str_alg(
-    buf,                                  // Output buffer for hash
-    plaintext_password,                   // password to hash from param
-    strlen(plaintext_password),           // Length of password 
-    crypto_pwhash_OPSLIMIT_INTERACTIVE,   // CPU cost, safe default
-    crypto_pwhash_MEMLIMIT_INTERACTIVE,   // Memory cost, safe default
-    crypto_pwhash_ALG_ARGON2ID13          // alogorithm: Argon2id v1.3
-  ) != 0) {
-    log_message(LOG_ERROR, "Password hashing failed.");
-    account_free(new_account);
-    return NULL;
-  }
-
-  // NOTE: maybe we should check if safe_strcpy fails 
-  safe_strcpy(new_account->password_hash, buf, HASH_LENGTH);
-
-  /** Validate email 
-   *
-   * @rubric: "...A basic check should be performed on the email: it should
-   *          consist only of ASCII, printable characters (according to the C standard) and must not contain
-   *          any spaces. (Other portions of the system will require the user to verify that they can read
-   *          messages sent to that email address.)"
-   */
+  safe_strcpy(new_account->password_hash, hashed_password->hash, HASH_LENGTH);
+  free(hashed_password);
 
   email_t *validated_email = validate_email(email);
   if (validated_email == NULL) {
     account_free(new_account);
     return NULL;
   }
-
   safe_strcpy(new_account->email, validated_email->email, EMAIL_LENGTH);
   free(validated_email);
 
-  /** Validate birthdate
-   * 
-   * @brief: The birthdate must be in the format YYYY-MM-DD. 
-   * 
-   * The new_account->birthdate field is a string of length BIRTHDATE_LENGTH. 
-   * By default, this is 10, thus the birthdate string must be 9 characters long + `\0` terminator.
-   * new_account->birthdate @format: YYYYMMDD (without dashes).
-   *
-   * @rubric: The birthdate must be validated to ensure it is a valid date 
-   *         in the correct format (YYYY-MM-DD). The year must be within 
-   *         a reasonable range (e.g., 1900-2025), and the day must be 
-   *         valid for the given month, accounting for leap years.
-   */
-
-  // Check if birthdate is valid
-  int year, month, day;
-  if (sscanf(birthdate, "%4d-%2d-%2d", &year, &month, &day) != 3 ||
-    year < 1900 || year > 2025 ||
-    month < 1 || month > 12) {
-    log_message(LOG_ERROR, "Invalid birthdate format. Expected YYYY-MM-DD.");
+  birthdate_t *valid_bday = validate_birthdate(birthdate);
+  if (!(valid_bday)) {
     account_free(new_account);
     return NULL;
   }
-
-  int days_in_month[] = { 31, (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0) ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
-  
-  if (day < 1 || day > days_in_month[month - 1]) {
-    log_message(LOG_ERROR, "Invalid day for birthdate month.");
-    account_free(new_account);
-    return NULL;
-  }
-
-  snprintf(new_account->birthdate, BIRTHDATE_LENGTH, "%04d%02d%02d", year, month, day);  
+  safe_strcpy(new_account->birthdate, valid_bday->date, BIRTHDATE_LENGTH);
+  free(valid_bday);
 
   safe_strcpy(new_account->userid, userid, USER_ID_LENGTH);
   new_account->unban_time = 0;
@@ -215,6 +237,7 @@ account_t *account_create(const char *userid, const char *plaintext_password,
   new_account->login_fail_count = 0;
   new_account->last_login_time = 0;
   new_account->last_ip = 0;
+  
   return new_account;
 }
 
@@ -243,16 +266,47 @@ void account_free(account_t *acc) {
   log_message(LOG_INFO, "Account memory freed successfully.");
 }
 
-
+/**
+ * @brief Checks whether the plaintext password matches the stored hash.
+ * 
+ * Uses Argon2id from <libsodium.h> for secure crypto library functionality.
+ * Check whether supplied password is correct. returns true on success, false on failure
+ * @ref https://doc.libsodium.org/password_hashing/default_phf
+ * 
+ * @param acc The account to check against.
+ * @param plaintext_password The password to check, and should be transmitted over a secure channel.
+ * 
+ * @pre acc and plaintext_password must be non-NULL.
+ * @pre plaintext_password must be a valid, null-terminating string.
+ * 
+ * @return True if password matches, False if not or on error. 
+ * 
+ */
 bool account_validate_password(const account_t *acc, const char *plaintext_password) {
-  // remove the contents of this function and replace it with your own code.
-  (void) acc;
-  (void) plaintext_password;
-  return false;
+  /**
+   * CODE DESIGN:
+   * Hash plaintext password
+   * Verify a valid password is stored in acc->password_hash
+   * Lock account (thread-safety)
+   * Compare to hash on file -> true if same, false if not
+   * Unlock account mutex
+   * Release any used memory
+   */
+
+  int result = 0;
+  result = crypto_pwhash_str_verify(
+    acc->password_hash,         // Hash on store
+    plaintext_password,         // User inputed pw
+    strlen(plaintext_password)  // Input length
+  );
+
+  return result == 0;
 }
 
 bool account_update_password(account_t *acc, const char *new_plaintext_password) {
   // remove the contents of this function and replace it with your own code.
+  // set hashed password record derived from new plaintext password.
+  // returns true on success, false on failure
   (void) acc;
   (void) new_plaintext_password;
   return false;
