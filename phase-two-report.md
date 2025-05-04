@@ -30,39 +30,39 @@ void account_set_email(account_t *acc, const char *new_email);
 ```
 | Design Decision | Justification |
 | --------------- | ------------- |
-| -               |               |
-| -               |               |
+| **Trim trailing newline** | To avoid storing unwanted newline characters that could come from user input (e.g., from `fgets`). |
+| **Bounded string copy using `strncpy()`** | Prevents buffer overflow by ensuring that no more than `EMAIL_LENGTH - 1` characters are copied. |
+| **Explicit null termination** | Guarantees a null-terminated string even when `strncpy` doesn't automatically do so. |
 
 | Difficulty Encountered | Remedy |
 | ---------------------- | ------ |
-| -                      |        |
-| -                      |        |
+| **Trailing newline character** | Stripped the newline by checking `new_email[len - 1] == '\n'` and reducing the length accordingly. |
+| **Ensuring null-termination when copying** | Explicitly set `acc->email[len] = '\0'` to prevent issues with un-terminated strings. |
 ```
 void account_set_unban_time(account_t *acc, time_t t);
 void account_set_expiration_time(account_t *acc, time_t t);
 ```
 | Design Decision | Justification |
 | --------------- | ------------- |
-| -               |               |
-| -               |               |
+| **Check if `t >= 0`** | To prevent assigning invalid negative values to `unban_time` or `expiration_time`, ensuring valid data. |
+| **No assignment for negative values** | Fosters data integrity by rejecting unreasonable values. |
 
 | Difficulty Encountered | Remedy |
 | ---------------------- | ------ |
-| -                      |        |
-| -                      |        |
+| **Handling negative times** | Added a check for `t >= 0` to avoid unintentional assignment of invalid time values. |
 ```
 bool account_is_banned(const account_t *acc);
 bool account_is_expired(const account_t *acc);
 ```
 | Design Decision | Justification |
 | --------------- | ------------- |
-| -               |               |
-| -               |               |
+| **Check `unban_time > 0` or `expiration_time > 0` before comparison** | Only evaluate when these fields have been explicitly set to non-zero values, preventing false positives. |
+| **Use of `time(NULL)`** | Retrieves the current time in a portable, reliable way to compare against the account's ban or expiration time. |
+| **Return `true` if conditions match** | `account_is_banned()` returns `true` when the account is still banned (current time before `unban_time`), and `account_is_expired()` when the account has expired (current time after `expiration_time`). |
 
 | Difficulty Encountered | Remedy |
 | ---------------------- | ------ |
-| -                      |        |
-| -                      |        |
+| **Comparing against current time correctly** | Used `time(NULL)` to get the current system time and compare it against `unban_time` or `expiration_time`. |
 ```
 void account_record_login_success(account_t *acc, ip4_addr_t ip);
 void account_record_login_failure(account_t *acc);
