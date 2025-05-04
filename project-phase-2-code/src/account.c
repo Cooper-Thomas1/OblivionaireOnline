@@ -116,33 +116,46 @@ void account_record_login_failure(account_t *acc) {
 }
 
 bool account_is_banned(const account_t *acc) {
-  // remove the contents of this function and replace it with your own code.
-  (void) acc;
+  if (acc->unban_time > 0) {
+    time_t now = time(NULL);
+    return (now < acc->unban_time);
+  }
   return false;
 }
 
 bool account_is_expired(const account_t *acc) {
-  // remove the contents of this function and replace it with your own code.
-  (void) acc;
+  if (acc->expiration_time > 0) {
+    time_t now = time(NULL);
+    return (now > acc->expiration_time);
+  }
   return false;
 }
 
 void account_set_unban_time(account_t *acc, time_t t) {
-  // remove the contents of this function and replace it with your own code.
-  (void) acc;
-  (void) t;
+  if (t >= 0) {
+    acc->unban_time = t;
+  }
 }
 
 void account_set_expiration_time(account_t *acc, time_t t) {
-  // remove the contents of this function and replace it with your own code.
-  (void) acc;
-  (void) t;
+  if (t >= 0) {
+    acc->expiration_time = t;
+  }
 }
 
 void account_set_email(account_t *acc, const char *new_email) {
-  // remove the contents of this function and replace it with your own code.
-  (void) acc;
-  (void) new_email;
+  size_t len = strlen(new_email);
+
+  if (len > 0 && new_email[len - 1] == '\n') {
+      len--;
+  }
+
+  if (len >= EMAIL_LENGTH) {
+      len = EMAIL_LENGTH - 1;
+  }
+
+  strncpy(acc->email, new_email, len);
+  acc->email[len] = '\0';
 }
 
 bool account_print_summary(const account_t *acct, int fd) {
