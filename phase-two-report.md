@@ -76,25 +76,29 @@ void account_record_login_failure(account_t *acc);
 ```
 | Design Decision | Justification |
 | --------------- | ------------- |
-| -               |               |
-| -               |               |
+| **Reset `login_fail_count` or `login_count` to 0** | A successful login(failed login) reset the failure count(the success count), as specified in the spec. |
+| **Check for `UINT_MAX` before increment** | Prevents unsigned integer overflow. |
+| **Record `last_login_time` using `time(NULL)`** | Captures the current login time in a suitable way. |
+| **Store IP address in `last_ip` field** | Keeps track of the IP for displaying user information. |
 
 | Difficulty Encountered | Remedy |
 | ---------------------- | ------ |
-| -                      |        |
-| -                      |        |
+| **Potential for `login_count` or `login_fail_count` overflow** | Added a conditional check before incrementing. |
 ```
 bool account_print_summary(const account_t *acct, int fd);
 ```
 | Design Decision | Justification |
 | --------------- | ------------- |
-| -               |               |
-| -               |               |
+| **Use `memcpy` with explicit null termination on strings** | Use memcpy with explicit null termination on strings. |
+| **Use `localtime_r` and `strftime`** | Produces safe and human-readable time output. |
+| **Use `inet_ntop` for IP formatting** | Converts raw IP to readable form. |
+| **Return false if `dprintf` fails** | Ensures caller is aware of I/O issues. |
 
 | Difficulty Encountered | Remedy |
 | ---------------------- | ------ |
-| -                      |        |
-| -                      |        |
+| **Non-null-terminated userid/email risk** | Used safe buffers with explicit null-termination. |
+| **Formatting IP and time output** | Used standard C functions (`inet_ntop`, `strftime`). |
+
 ### 3.4 Password Handling
 ```
 bool account_validate_password(const account_t *acc,
