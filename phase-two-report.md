@@ -6,25 +6,32 @@ const char *email, const char *birthdate);
 ```
 | Design Decision | Justification |
 | --------------- | ------------- |
-| -               |               |
-| -               |               |
+| **Explicit null termination** | `strncpy()` doesnt guarantee null termination if the source string exceeds buffer length. Explicit null termination corrects this. |
+| **Bounded string copy using `strncpy()`** | Prevents buffer overflow by ensuring none of the values parsed to the function exceed their respective buffer length. |
+| **Using `sscanf()` to parse birthdate with strict formatting** | Ensures the input matches the expected format (YYYY-MM-DD). |
+| **Use `memset()` to intialise account_t structure** | Ensures all fields are set to 0 before working with them, makes default values predictable and secure. |
+| **Validate email to ensure only printable, non whitespace ASCII characters are used** | Prevents injection attacks, keeps data clean and avoids potential issues with handling data later. |
+| **Check for valid birthdate, including leap years** | Improves data intergrity, ensures users birthdates are real, prevents any issues when working with dates later. |
+| **Free allocated memory on failure** | Using `free(new_account);` immediatley followed by `return NULL;` when validation fails prevents dangling pointers and memory leaks and ensures clean failure. |
+| will mention log_message once implemented   |          |
 
 | Difficulty Encountered | Remedy |
 | ---------------------- | ------ |
-| -                      |        |
-| -                      |        | 
+| **Ensuring null termination when copying** | For each value set `value[VALUE_LENGTH - 1] = '\0'` to guarantee a null terminated string. |
+| **Validating Birthdate** | Used `sscanf()` for formatting and other checks to ensure the date was real including leap years. |
+| **Validating Email** | Used `isprint()` and `isspace()` to ensure email consists of printable and non whitespace ASCII characters. |
+|   will mention BIRTHDATE_LENGTH once solved      |        |
 ```
 void account_free(account_t *acc);
 ```
 | Design Decision | Justification |
 | --------------- | ------------- |
-| -               |               |
-| -               |               |
+| **Check for null inputs** | `if(acc == NULL)` protects against dereferencing a null pointer which would cause undefined behaviour. |
+| **Use `memset()` to zero all values before freeing** | Ensures sensitive account data has no way of being accessed after `free(acc)`. |
 
-| Difficulty Encountered | Remedy |
+| Difficulty Encountered | Remedy 
 | ---------------------- | ------ |
-| -                      |        |
-| -                      |        |
+| **Sensitive data may still be accessible** | Using `memset()` to overwrite the memory reduces the chance that sensitive data still remains in memory after deallocation. |
 ```
 void account_set_email(account_t *acc, const char *new_email);
 ```
