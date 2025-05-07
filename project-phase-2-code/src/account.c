@@ -116,33 +116,68 @@ void account_record_login_failure(account_t *acc) {
 }
 
 bool account_is_banned(const account_t *acc) {
-  // remove the contents of this function and replace it with your own code.
-  (void) acc;
-  return false;
+  if (acc->unban_time > 0) {
+    time_t now = time(NULL);
+    return (now < acc->unban_time);
+  }
 }
 
 bool account_is_expired(const account_t *acc) {
-  // remove the contents of this function and replace it with your own code.
-  (void) acc;
-  return false;
+  if (acc->expiration_time > 0) {
+    time_t now = time(NULL);
+    return (now > acc->expiration_time);
+  }
 }
 
 void account_set_unban_time(account_t *acc, time_t t) {
-  // remove the contents of this function and replace it with your own code.
-  (void) acc;
-  (void) t;
+  if (t >= 0) {
+    acc->unban_time = t;
+  } else {
+    log_message(LOG_ERROR, "Provided a negative number for unban time.");
+  }
 }
 
 void account_set_expiration_time(account_t *acc, time_t t) {
-  // remove the contents of this function and replace it with your own code.
-  (void) acc;
-  (void) t;
+  if (t >= 0) {
+    acc->expiration_time = t;
+  } else {
+    log_message(LOG_ERROR, "Provided a negative number for expiration time.");
+  }
 }
 
 void account_set_email(account_t *acc, const char *new_email) {
-  // remove the contents of this function and replace it with your own code.
-  (void) acc;
-  (void) new_email;
+  size_t len = strlen(new_email);
+
+  if (len > 0 && new_email[len - 1] == '\n') {
+    len--;
+  }
+
+  if (len >= EMAIL_LENGTH) {
+    len = EMAIL_LENGTH - 1;
+  }
+
+  for (size_t i = 0; i < len; i++) {
+    if (!isprint((unsigned char)new_email[i]) || isspace((unsigned char)new_email[i])) {
+      log_message(LOG_ERROR, "Provided email contains invalid characters.");
+      return;
+    }
+  }
+
+  const char *at = memchr(new_email, '@', len);
+  if (!at || at == new_email) {
+    log_message(LOG_ERROR, "Email must contain '@' and not start with it.");
+    return;
+  }
+
+  const char *dot = memchr(at, '.', len - (at - new_email));
+  if (!dot || dot == at + 1 || dot >= new_email + len - 1) {
+    log_message(LOG_ERROR, "Email domain must contain a '.' after '@'.");
+    return;
+  }
+
+  memset(acc->email, 0, EMAIL_LENGTH);
+  strncpy(acc->email, new_email, len);
+  acc->email[len] = '\0';
 }
 
 bool account_print_summary(const account_t *acct, int fd) {
