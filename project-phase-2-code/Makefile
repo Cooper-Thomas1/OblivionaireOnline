@@ -78,7 +78,7 @@ install-dependencies:
 clean:
 	rm -rf $(BUILD_DIR) $(TARGET)
 
-.PHONY: all clean
+.PHONY: all clean tests
 
 .DELETE_ON_ERROR:
 
