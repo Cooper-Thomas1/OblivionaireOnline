@@ -28,22 +28,48 @@ account_t *account_create(const char *userid, const char *plaintext_password,
 {
   account_t *new_account = malloc(sizeof(account_t));
   if (new_account == NULL) {
-    fprintf(stderr, "Error: Memory allocation failed for new account.\n");
+    //log_message(LOG_ERROR,"Memory allocation failed for new account.");
     return NULL;
   }
 
-  memset(new_account, 0, sizeof(account_t)); // Zeros all values
+  // Zeros all values
+  memset(new_account, 0, sizeof(account_t));
+
+  // --------- USER ID ---------
+
+  //checks for valid user id
+  if (userid[0] == '\0') {
+    log_message(LOG_ERROR,"User ID cannot be empty.");
+    free(new_account);
+    return NULL;
+  }
 
   //assign userid
   strncpy(new_account->userid, userid, USER_ID_LENGTH - 1);
   new_account->userid[USER_ID_LENGTH - 1] = '\0'; // Null termination
 
+  // -------- PASSWORD ---------
+
+  // Check if password is empty
+  if (plaintext_password[0] == '\0') {
+    log_message(LOG_ERROR,"Password cannot be empty.");
+    free(new_account);
+    return NULL;
+  }
   // need to call hashing function and set password.
   
-  // Validate email
+  // -------- EMAIL ---------
+
+  // Check if email is empty
+  if (email[0] == '\0') {
+    log_message(LOG_ERROR,"Email cannot be empty.");
+    free(new_account);
+    return NULL;
+}
+  // Validate email is ASCII printable and contains no spaces
   for (const char *p = email; *p != '\0'; p++) {
     if (!isprint((unsigned char)*p) || isspace((unsigned char)*p)) {
-        fprintf(stderr, "Error: Invalid email format. Email must be ASCII printable and contain no spaces.\n");
+        log_message(LOG_ERROR,"Email contains invalid characters.");
         free(new_account);
         return NULL;
     }
@@ -51,32 +77,34 @@ account_t *account_create(const char *userid, const char *plaintext_password,
 
   //assign email address
   strncpy(new_account->email, email, EMAIL_LENGTH - 1);
-  new_account->email[EMAIL_LENGTH - 1] = '\0';
-  //assign birthdate
+  new_account->email[EMAIL_LENGTH - 1] = '\0'; 
+
+  // -------- BIRTHDATE ---------
 
   //check if birthdate is valid
   int year, month, day;
-  if (sscanf(birthdate, "%4d-%2d-%2d", &year, &month, &day) != 3 ||
+  if (strlen(birthdate) != 8 || sscanf(birthdate, "%4d%2d%2d", &year, &month, &day) != 3 ||
       year < 1900 || year > 2025 ||
       month < 1 || month > 12) {
-    fprintf(stderr, "Error: Invalid birthdate format. Expected YYYY-MM-DD.\n");
+    log_message(LOG_ERROR,"Invalid birthdate format. Expected YYYYMMDD.");
     free(new_account);
     return NULL;
   }
 
+  // Checks for valid day of month (with leap year consideration)
   int days_in_month[] = { 31, (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0) ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
   
   if (day < 1 || day > days_in_month[month - 1]) {
-    fprintf(stderr, "Error: Invalid day for birthdate month.\n");
+    log_message(LOG_ERROR,"Invalid day for birthday month.");
     free(new_account);
     return NULL;
   }
 
+  //assign birthdate
   strncpy(new_account->birthdate, birthdate, BIRTHDATE_LENGTH);
+  new_account->birthdate[BIRTHDATE_LENGTH - 1] = '\0';
 
-  // NOTE: 1990-01-01 is 10 chars long, so would be 11 with null terminator.
-  new_account->birthdate[BIRTHDATE_LENGTH] = '\0';
-
+  log_message(LOG_INFO, "Account created for user ID: %s", new_account->userid);
   return new_account;
 }
 
