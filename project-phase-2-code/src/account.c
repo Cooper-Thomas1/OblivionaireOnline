@@ -120,6 +120,7 @@ bool account_is_banned(const account_t *acc) {
     time_t now = time(NULL);
     return (now < acc->unban_time);
   }
+  return false;
 }
 
 bool account_is_expired(const account_t *acc) {
@@ -127,6 +128,7 @@ bool account_is_expired(const account_t *acc) {
     time_t now = time(NULL);
     return (now > acc->expiration_time);
   }
+  return false;
 }
 
 void account_set_unban_time(account_t *acc, time_t t) {
@@ -174,8 +176,8 @@ void account_set_email(account_t *acc, const char *new_email) {
     log_message(LOG_ERROR, "Email domain must contain a '.' after '@'.");
     return;
   }
-
-  memset(acc->email, 0, EMAIL_LENGTH);
+  
+  sodium_memzero(acc->email, EMAIL_LENGTH);
   strncpy(acc->email, new_email, len);
   acc->email[len] = '\0';
 }
