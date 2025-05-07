@@ -115,6 +115,17 @@ void account_record_login_failure(account_t *acc) {
   acc->login_fail_count += 1;
 }
 
+/**
+ * @brief Checks if the account is currently banned.
+ * 
+ * This function checks whether the account is banned by comparing the current time
+ * with the unban time. If the current time is earlier than the unban time, the account
+ * is considered banned.
+ * 
+ * @param acc A pointer to the account struct to check.
+ * 
+ * @return true if the account is banned, false otherwise. 
+ */
 bool account_is_banned(const account_t *acc) {
   if (acc->unban_time > 0) {
     time_t now = time(NULL);
@@ -123,6 +134,17 @@ bool account_is_banned(const account_t *acc) {
   return false;
 }
 
+/**
+ * @brief Checks if the account has expired.
+ * 
+ * This function checks whether the account has expired by comparing the current time
+ * with the expiration time. If the current time is later than the expiration time, 
+ * the account is considered expired.
+ * 
+ * @param acc A pointer to the account struct to check.
+ * 
+ * @return true if the account has expired, false otherwise.
+ */
 bool account_is_expired(const account_t *acc) {
   if (acc->expiration_time > 0) {
     time_t now = time(NULL);
@@ -131,6 +153,17 @@ bool account_is_expired(const account_t *acc) {
   return false;
 }
 
+/**
+ * @brief Sets the unban time for the given account.
+ * 
+ * This function updates the unban time of the specified account. If the provided time 
+ * is negative, it logs an error and does not update the unban time.
+ * 
+ * @param acc A pointer to the account struct where the unban time will be set.
+ * @param t The new unban time as a timestamp. A negative value will log an error.
+ * 
+ * @return void
+ */
 void account_set_unban_time(account_t *acc, time_t t) {
   if (t >= 0) {
     acc->unban_time = t;
@@ -139,6 +172,17 @@ void account_set_unban_time(account_t *acc, time_t t) {
   }
 }
 
+/**
+ * @brief Sets the expiration time for the given account.
+ * 
+ * This function updates the expiration time of the specified account. If the provided 
+ * time is negative, it logs an error and does not update the expiration time.
+ * 
+ * @param acc A pointer to the account struct where the expiration time will be set.
+ * @param t The new expiration time as a timestamp. A negative value will log an error.
+ * 
+ * @return void
+ */
 void account_set_expiration_time(account_t *acc, time_t t) {
   if (t >= 0) {
     acc->expiration_time = t;
@@ -147,6 +191,19 @@ void account_set_expiration_time(account_t *acc, time_t t) {
   }
 }
 
+/**
+ * @brief Sets the email address for the given account.
+ * 
+ * This function validates and updates the email address for the specified account. 
+ * It ensures that the email address follows basic formatting rules (e.g., contains 
+ * an '@' symbol and a '.' in the domain part) and does not exceed the allowed length.
+ * It also clears any previously stored email before copying the new one.
+ * 
+ * @param acc A pointer to the account struct where the email will be updated.
+ * @param new_email A string containing the new email address to set.
+ * 
+ * @return void
+ */
 void account_set_email(account_t *acc, const char *new_email) {
   size_t len = strlen(new_email);
 
