@@ -494,39 +494,39 @@ void account_set_expiration_time(account_t *acc, time_t t) {
  * 
  * @return void
  */
- void account_set_email(account_t *acc, const char *new_email) {
-   size_t len = strlen(new_email);
+// void account_set_email(account_t *acc, const char *new_email) {
+//   size_t len = strlen(new_email);
 
-   if (len > 0 && new_email[len - 1] == '\n') {
-     len--;
-   }
+//   if (len > 0 && new_email[len - 1] == '\n') {
+//     len--;
+//   }
 
-   if (len >= EMAIL_LENGTH) {
-     len = EMAIL_LENGTH - 1;
-   }
+//   if (len >= EMAIL_LENGTH) {
+//     len = EMAIL_LENGTH - 1;
+//   }
 
-   for (size_t i = 0; i < len; i++) {
-     if (!isprint((unsigned char)new_email[i]) || isspace((unsigned char)new_email[i])) {
-       log_message(LOG_ERROR, "Provided email contains invalid characters.");
-       return;
-     }
-   }
+//   for (size_t i = 0; i < len; i++) {
+//     if (!isprint((unsigned char)new_email[i]) || isspace((unsigned char)new_email[i])) {
+//       log_message(LOG_ERROR, "Provided email contains invalid characters.");
+//       return;
+//     }
+//   }
 
-   const char *at = memchr(new_email, '@', len);
-   if (!at || at == new_email) {
-     log_message(LOG_ERROR, "Email must contain '@' and not start with it.");
-     return;
-   }
+//   const char *at = memchr(new_email, '@', len);
+//   if (!at || at == new_email) {
+//     log_message(LOG_ERROR, "Email must contain '@' and not start with it.");
+//     return;
+//   }
 
-   const char *dot = memchr(at, '.', len - (at - new_email));
-   if (!dot || dot == at + 1 || dot >= new_email + len - 1) {
-     log_message(LOG_ERROR, "Email domain must contain a '.' after '@'.");
-     return;
-   }
+//   const char *dot = memchr(at, '.', len - (at - new_email));
+//   if (!dot || dot == at + 1 || dot >= new_email + len - 1) {
+//     log_message(LOG_ERROR, "Email domain must contain a '.' after '@'.");
+//     return;
+//   }
   
-   sodium_memzero(acc->email, EMAIL_LENGTH);
-   strncpy(acc->email, new_email, len);
-   acc->email[len] = '\0';
+//   sodium_memzero(acc->email, EMAIL_LENGTH);
+//   strncpy(acc->email, new_email, len);
+//   acc->email[len] = '\0';
 
 /**
  * @brief Safely update the account's email address.
