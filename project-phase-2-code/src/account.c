@@ -47,8 +47,7 @@ int parse_int(const char *str, int len) {
     log_message(LOG_ERROR, "Birthday length exceeds buffer size.");
     return -1;
   }
-  safe_strcpy(buf, str, len);
-  buf[len] = '\0';
+  safe_strcpy(buf, str, len+1);
   char *end;
   long val = strtol(buf, &end, 10);
   if (*end != '\0') {
