@@ -4,6 +4,7 @@
 #include <time.h>
 #include <string.h>
 #include <arpa/inet.h> 
+#include <limits.h>
 
 // Added for testing purposes
 #include <stdlib.h>
@@ -105,14 +106,21 @@ bool account_update_password(account_t *acc, const char *new_plaintext_password)
 
 void account_record_login_success(account_t *acc, ip4_addr_t ip) {
   acc->login_fail_count = 0;
-  acc->login_count += 1;
+  
+  if (acc->login_count < UINT_MAX) {
+    acc->login_count += 1;
+  }
+  
   acc->last_login_time = time(NULL);
   acc->last_ip = ip;
 }
 
 void account_record_login_failure(account_t *acc) {
   acc->login_count = 0;
-  acc->login_fail_count += 1;
+  
+  if (acc->login_fail_count < UINT_MAX) {
+    acc->login_fail_count += 1;
+  }
 }
 
 bool account_is_banned(const account_t *acc) {
