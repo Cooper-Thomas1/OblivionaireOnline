@@ -103,6 +103,50 @@ userid_t *validate_userid(const char *userid) {
   return valid_userid;
 }
 
+/*
+  // Validated emails go in here
+  typedef struct {
+    char email[EMAIL_LENGTH];
+  } email_t;
+*/
+
+  /** 
+   * @brief Validate email helper function
+   * 
+   * This function checks if the email provided is "consisting
+   * of only ASCII, printable characters (according to the C standard)
+   * and must not contain any spaces".
+   * 
+   * @param email A valid, null-terminated string representing the email address to validate.
+   * 
+   * @return A pointer to a valid email_t structure on success, 
+   * or NULL on error with log_message(LOG_ERROR).
+   */
+/*
+  email_t *validate_email(const char *email) {
+    if (strlen(email) >= EMAIL_LENGTH) {
+      log_message(LOG_ERROR, "Email exceeds maximum length.");
+      return NULL;
+    }
+
+    for (const char *p = email; *p != '\0'; p++) {
+      if (!isprint((unsigned char)*p) || isspace((unsigned char)*p)) {
+        log_message(LOG_ERROR, "Invalid email format. Email must be ASCII printable and contain no spaces.");
+        return NULL;
+      }
+    }
+
+    email_t *valid_email = malloc(sizeof(email_t));
+    if (valid_email == NULL) {
+      log_message(LOG_ERROR, "Memory allocation failed for valid_email.");
+      return NULL;
+    }
+
+    safe_strcpy(valid_email->email, email, EMAIL_LENGTH);
+
+    return valid_email;
+  }
+*/
 
 // Generated hashes go in here
 typedef struct {
