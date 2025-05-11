@@ -202,7 +202,7 @@ typedef struct {
 /** 
  * @brief Validates the birthdate format and checks if it is a valid date.
  * 
- * This function checks if the birthdate string is in the format YYYYMMDD,
+ * This function checks if the birthdate string is in the format YYYY-MM-DD,
  * validates the year, month, and day, and ensures that the date is not in the future.
  * 
  * @param bday A valid, null-terminated string representing the birthdate to validate.
@@ -211,15 +211,22 @@ typedef struct {
  */
  birthdate_t *validate_birthdate(const char *bday) {  
   for (int i = 0; i < BIRTHDATE_LENGTH; i++) {
-    if (!isdigit((unsigned char)bday[i])) {
-      log_message(LOG_ERROR, "Birthdate must contain only digits");
-      return NULL;
+    if ((i == 4 || i == 7)) {
+        if (bday[i] != '-') {
+            log_message(LOG_ERROR, "Birthdate must be in the format YYYY-MM-DD with hyphens.");
+            return NULL;
+        }
+    } else {
+        if (!isdigit((unsigned char)bday[i])) {
+            log_message(LOG_ERROR, "Birthdate must be in the format YYYY-MM-DD with hyphens.");
+            return NULL;
+        }
     }
-  }
+}
   
   int year = parse_int(bday, 4); 
-  int month = parse_int(bday + 4, 2);
-  int day = parse_int(bday + 6, 2);
+  int month = parse_int(bday + 5, 2);
+  int day = parse_int(bday + 8, 2);
   if (year < 1900 || month < 1 || month > 12) {
     log_message(LOG_ERROR, "Invalid year or month for birthdate.");
     return NULL;
@@ -249,7 +256,7 @@ typedef struct {
     return NULL;
   }  
 
-  safe_strcpy(valid_bday->date, bday, BIRTHDATE_LENGTH);
+  memcpy(valid_bday->date, bday, BIRTHDATE_LENGTH);
   return valid_bday;
 }
 
@@ -325,7 +332,7 @@ account_t *account_create(const char *userid, const char *plaintext_password,
     account_free(new_account);
     return NULL;
   }
-  safe_strcpy(new_account->birthdate, valid_bday->date, BIRTHDATE_LENGTH);
+  memcpy(new_account->birthdate, valid_bday->date, BIRTHDATE_LENGTH);
   free(valid_bday);
 
   return new_account;
