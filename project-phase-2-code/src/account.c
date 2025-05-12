@@ -30,46 +30,123 @@ int safe_strcpy(char *dest, const char *src, size_t dest_size) {
   return 0;
 }
 
-// Validated emails go in here
-typedef struct {
-  char email[EMAIL_LENGTH];
-} email_t;
-
-/** 
- * @brief Validate email helper function
+/**
+ * @brief Parses an integer from a string.
  * 
- * This function checks if the email provided is "consisting
+ * This function safely copies the string to a buffer and converts it to an integer.
+ * It checks for valid characters and ensures the length is within bounds.
+ * 
+ * @param str The string to parse.
+ * @param len The length of the string.
+ * 
+ * @return The parsed integer, or -1 on error with log_message(LOG_ERROR).
+ */
+int parse_int(const char *str, int len) {
+  char buf[5]; // long enough for each part of date
+  if (len >= sizeof(buf)) {
+    log_message(LOG_ERROR, "Birthday length exceeds buffer size.");
+    return -1;
+  }
+  safe_strcpy(buf, str, len+1);
+  char *end;
+  long val = strtol(buf, &end, 10);
+  if (*end != '\0') {
+    log_message(LOG_ERROR, "Invalid character in date string.");
+    return -1; // invalid character
+  }
+  return (int)val;
+}
+
+// Validated userids 
+typedef struct{
+  char userid[USER_ID_LENGTH];
+} userid_t;
+
+/**
+ * @brief Validate userid helper function
+ * 
+ * This function checks if the userid provided is "consisting
  * of only ASCII, printable characters (according to the C standard)
  * and must not contain any spaces".
  * 
- * @param email A valid, null-terminated string representing the email address to validate.
+ * @param userid A valid, null-terminated string representing the user ID to validate.
  * 
- * @return A pointer to a valid email_t structure on success, 
+ * @return A pointer to a valid userid_t structure on success, 
  * or NULL on error with log_message(LOG_ERROR).
  */
-email_t *validate_email(const char *email) {
-  if (strlen(email) >= EMAIL_LENGTH) {
-    log_message(LOG_ERROR, "Email exceeds maximum length.");
+userid_t *validate_userid(const char *userid) {
+  if (strlen(userid) >= USER_ID_LENGTH) {
+    log_message(LOG_ERROR, "Userid exceeds maximum length.");
     return NULL;
   }
 
-  for (const char *p = email; *p != '\0'; p++) {
+  if (userid[0] == '\0') {
+    log_message(LOG_ERROR,"User ID cannot be empty.");
+    return NULL;
+  }
+
+  for (const char *p = userid; *p != '\0'; p++) {
     if (!isprint((unsigned char)*p) || isspace((unsigned char)*p)) {
-      log_message(LOG_ERROR, "Invalid email format. Email must be ASCII printable and contain no spaces.");
+      log_message(LOG_ERROR, "Invalid userid format. userid must be ASCII printable and contain no spaces.");
       return NULL;
     }
   }
 
-  email_t *valid_email = malloc(sizeof(email_t));
-  if (valid_email == NULL) {
-    log_message(LOG_ERROR, "Memory allocation failed for valid_email.");
+  userid_t *valid_userid = malloc(sizeof(userid_t));
+  if (valid_userid == NULL) {
+    log_message(LOG_ERROR, "Memory allocation failed for valid_userid.");
     return NULL;
   }
 
-  safe_strcpy(valid_email->email, email, EMAIL_LENGTH);
+  safe_strcpy(valid_userid->userid, userid, USER_ID_LENGTH);
 
-  return valid_email;
+  return valid_userid;
 }
+
+/*
+  // Validated emails go in here
+  typedef struct {
+    char email[EMAIL_LENGTH];
+  } email_t;
+*/
+
+  /** 
+   * @brief Validate email helper function
+   * 
+   * This function checks if the email provided is "consisting
+   * of only ASCII, printable characters (according to the C standard)
+   * and must not contain any spaces".
+   * 
+   * @param email A valid, null-terminated string representing the email address to validate.
+   * 
+   * @return A pointer to a valid email_t structure on success, 
+   * or NULL on error with log_message(LOG_ERROR).
+   */
+/*
+  email_t *validate_email(const char *email) {
+    if (strlen(email) >= EMAIL_LENGTH) {
+      log_message(LOG_ERROR, "Email exceeds maximum length.");
+      return NULL;
+    }
+
+    for (const char *p = email; *p != '\0'; p++) {
+      if (!isprint((unsigned char)*p) || isspace((unsigned char)*p)) {
+        log_message(LOG_ERROR, "Invalid email format. Email must be ASCII printable and contain no spaces.");
+        return NULL;
+      }
+    }
+
+    email_t *valid_email = malloc(sizeof(email_t));
+    if (valid_email == NULL) {
+      log_message(LOG_ERROR, "Memory allocation failed for valid_email.");
+      return NULL;
+    }
+
+    safe_strcpy(valid_email->email, email, EMAIL_LENGTH);
+
+    return valid_email;
+  }
+*/
 
 // Generated hashes go in here
 typedef struct {
@@ -118,35 +195,59 @@ pwhash_t *hash_password(const char* pw) {
   return valid_hash;
 }
 
+// Birthdates go here
 typedef struct {
   char date[BIRTHDATE_LENGTH];
 } birthdate_t;
 
 /** 
- * @brief: Check if birthdate is valid. The birthdate must be in the format YYYY-MM-DD. 
- *
- * The birthdate must be validated to ensure it is a valid date 
- * in the correct format (YYYY-MM-DD). The year must be within 
- * reasonable range (e.g., 1900-2025), and the day must be 
- * valid for the given month, accounting for leap years.
+ * @brief Validates the birthdate format and checks if it is a valid date.
  * 
- * @param bday in format YYYY-MM-DD to be validated.
+ * This function checks if the birthdate string is in the format YYYY-MM-DD,
+ * validates the year, month, and day, and ensures that the date is not in the future.
  * 
- * @return birthdate_t in format YYYYMMDD (without dashes), or NULL on error.
+ * @param bday A valid, null-terminated string representing the birthdate to validate.
+ * 
+ * @return A pointer to a valid birthdate_t structure on success, or NULL on error with log_message(LOG_ERROR).
  */
-birthdate_t *validate_birthdate(const char *bday) {  
-  int year, month, day;
-  if (sscanf(bday, "%4d-%2d-%2d", &year, &month, &day) != 3 ||
-    year < 1900 || year > 2025 ||
-    month < 1 || month > 12) {
-    log_message(LOG_ERROR, "Invalid birthdate format. Expected YYYY-MM-DD.");
+ birthdate_t *validate_birthdate(const char *bday) {  
+  for (int i = 0; i < BIRTHDATE_LENGTH; i++) {
+    if ((i == 4 || i == 7)) {
+        if (bday[i] != '-') {
+            log_message(LOG_ERROR, "Birthdate must be in the format YYYY-MM-DD with hyphens.");
+            return NULL;
+        }
+    } else {
+        if (!isdigit((unsigned char)bday[i])) {
+            log_message(LOG_ERROR, "Birthdate must be in the format YYYY-MM-DD with hyphens.");
+            return NULL;
+        }
+    }
+}
+  
+  int year = parse_int(bday, 4); 
+  int month = parse_int(bday + 5, 2);
+  int day = parse_int(bday + 8, 2);
+  if (year < 1900 || month < 1 || month > 12) {
+    log_message(LOG_ERROR, "Invalid year or month for birthdate.");
     return NULL;
   }
-  
+
   int days_in_month[] = { 31, (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0) ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
-  
+
   if (day < 1 || day > days_in_month[month - 1]) {
     log_message(LOG_ERROR, "Invalid day for birthdate month.");
+    return NULL;
+  }
+
+  struct tm input_tm = {0};
+  input_tm.tm_year = year - 1900;
+  input_tm.tm_mon = month - 1;
+  input_tm.tm_mday = day;
+
+  time_t input_time = mktime(&input_tm);
+  if (input_time == -1 || difftime(input_time, time(NULL)) > 0) {
+    log_message(LOG_ERROR, "Birthdate cannot be in the future.");
     return NULL;
   }
 
@@ -156,7 +257,7 @@ birthdate_t *validate_birthdate(const char *bday) {
     return NULL;
   }  
 
-  snprintf(valid_bday->date, BIRTHDATE_LENGTH, "%04d%02d%02d", year, month, day); // YYYYMMDD format
+  memcpy(valid_bday->date, bday, BIRTHDATE_LENGTH);
   return valid_bday;
 }
 
@@ -181,85 +282,41 @@ birthdate_t *validate_birthdate(const char *bday) {
  * @return A pointer to the newly created account structure on success, or NULL on error.
  *         On error, an appropriate error message is logged using `log_message`.
  *
- * @note The birthdate is validated to ensure it is in the correct format and represents a valid date.
- *       The email undergoes basic validation to ensure it meets the specified criteria.
+ * @note All four values are checked for validity.
  */
 account_t *account_create(const char *userid, const char *plaintext_password,
                           const char *email, const char *birthdate
                       )
 {
-  /** FUNCTION PROPOSED DESIGN:
-  * NOT NEEDED ---> Validate input params for NULL, emptry string; 
-  * Allocate memory for new_acc struct, check for fail (NULL);
-  * Initialise all fields -> 0;
-  * Copy and validate userid;
-  * hash password (via Argon2) -> set password_hash;
-  * Validate email -> set email;
-  * Validate birth date -> set birthdate;
-  * NOT NEEDED ---> Set default values for other fields unban_time, expiration_time, login_count, login_fail_count, last_login_time, last_ip;
-  * Return pointer new_acc struct; 
-  */
-
   account_t *new_account = malloc(sizeof(account_t));
   if (new_account == NULL) {
     log_message(LOG_ERROR, "Memory allocation failed for new account.");
     return NULL;
   }
-  memset(new_account, 0, sizeof(account_t)); 
 
-//   // --------- USER ID ---------
+  sodium_memzero(new_account, sizeof(account_t));
 
-//   //checks for valid user id
-//   if (userid[0] == '\0') {
-//     log_message(LOG_ERROR,"User ID cannot be empty.");
-//     free(new_account);
-//     return NULL;
-//   }
+  userid_t *valid_userid = validate_userid(userid);
+  if (!(valid_userid)) {
+    account_free(new_account);
+    return NULL;
+  }
+  safe_strcpy(new_account->userid, valid_userid->userid, USER_ID_LENGTH);
+  free(valid_userid);
 
-//   //assign userid
-//   strncpy(new_account->userid, userid, USER_ID_LENGTH - 1);
-//   new_account->userid[USER_ID_LENGTH - 1] = '\0'; // Null termination
+  if ( plaintext_password[0] == '\0' ) {
+    log_message(LOG_ERROR, "Password cannot be empty.");
+    account_free(new_account);
+    return NULL;
+  }
 
-//   // -------- PASSWORD ---------
-
-//   // Check if password is empty
-//   if (plaintext_password[0] == '\0') {
-//     log_message(LOG_ERROR,"Password cannot be empty.");
-//     free(new_account);
-//     return NULL;
-//   }
-//   // need to call hashing function and set password.
-  
-//   // -------- EMAIL ---------
-
-//   // Check if email is empty
-//   if (email[0] == '\0') {
-//     log_message(LOG_ERROR,"Email cannot be empty.");
-//     free(new_account);
-//     return NULL;
-// }
-//   // Validate email is ASCII printable and contains no spaces
-//   for (const char *p = email; *p != '\0'; p++) {
-//     if (!isprint((unsigned char)*p) || isspace((unsigned char)*p)) {
-//         log_message(LOG_ERROR,"Email contains invalid characters.");
-//         free(new_account);
-//         return NULL;
-//     }
-//   }
-
-//   //assign email address
-//   strncpy(new_account->email, email, EMAIL_LENGTH - 1);
-//   new_account->email[EMAIL_LENGTH - 1] = '\0'; 
-
-//   // -------- BIRTHDATE ---------
-
-//   //check if birthdate is valid
-//   int year, month, day;
-//   if (strlen(birthdate) != 8 || sscanf(birthdate, "%4d%2d%2d", &year, &month, &day) != 3 ||
-//       year < 1900 || year > 2025 ||
-//       month < 1 || month > 12) {
-//     log_message(LOG_ERROR,"Invalid birthdate format. Expected YYYYMMDD.");
-//     free(new_account);
+  for (const char *p = plaintext_password; *p != '\0'; p++) {
+    if (!isprint((unsigned char)*p) || isspace((unsigned char)*p)) {
+      log_message(LOG_ERROR, "Invalid password format. Password must be ASCII printable and contain no spaces.");
+      free(new_account);
+      return NULL;
+    }
+  }
 
   pwhash_t *hashed_password = hash_password(plaintext_password);
   if (hashed_password == NULL) {
@@ -269,42 +326,15 @@ account_t *account_create(const char *userid, const char *plaintext_password,
   safe_strcpy(new_account->password_hash, hashed_password->hash, HASH_LENGTH);
   free(hashed_password);
 
-  // Checks for valid day of month (with leap year consideration)
-  // int days_in_month[] = { 31, (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0) ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
-  
-  // if (day < 1 || day > days_in_month[month - 1]) {
-  //   log_message(LOG_ERROR,"Invalid day for birthday month.");
-  //   free(new_account);
-
-  email_t *validated_email = validate_email(email);
-  if (validated_email == NULL) {
-    account_free(new_account);
-    return NULL;
-  }
-  safe_strcpy(new_account->email, validated_email->email, EMAIL_LENGTH);
-  free(validated_email);
-
-  // //assign birthdate
-  // strncpy(new_account->birthdate, birthdate, BIRTHDATE_LENGTH);
-  // new_account->birthdate[BIRTHDATE_LENGTH - 1] = '\0';
-
-  // log_message(LOG_INFO, "Account created for user ID: %s", new_account->userid);
+  account_set_email(new_account, email);
 
   birthdate_t *valid_bday = validate_birthdate(birthdate);
   if (!(valid_bday)) {
     account_free(new_account);
     return NULL;
   }
-  safe_strcpy(new_account->birthdate, valid_bday->date, BIRTHDATE_LENGTH);
+  memcpy(new_account->birthdate, valid_bday->date, BIRTHDATE_LENGTH);
   free(valid_bday);
-
-  safe_strcpy(new_account->userid, userid, USER_ID_LENGTH);
-  new_account->unban_time = 0;
-  new_account->expiration_time = 0;
-  new_account->login_count = 0;
-  new_account->login_fail_count = 0;
-  new_account->last_login_time = 0;
-  new_account->last_ip = 0;
 
   return new_account;
 }
