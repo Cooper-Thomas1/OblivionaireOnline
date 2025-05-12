@@ -3,3 +3,4 @@
 
 libsodium-dev
 check
+subunit

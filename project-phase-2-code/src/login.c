@@ -1,5 +1,6 @@
 #include "login.h"
 #include "account.h"
+#include "db.h"
 #include <stdbool.h>
 #include <time.h>
 #include <stdio.h>
