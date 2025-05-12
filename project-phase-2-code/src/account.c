@@ -52,7 +52,8 @@ int parse_int(const char *str, int len) {
   long val = strtol(buf, &end, 10);
   if (*end != '\0') {
     log_message(LOG_ERROR, "Invalid character in date string.");
-    return -1}; // invalid character
+    return -1; // invalid character
+  }
   return (int)val;
 }
 
