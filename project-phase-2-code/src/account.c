@@ -19,7 +19,7 @@
  * 
  * @return 0 = succes, -1 = src/dest is NULL, or dest_size < 1
  */
-int safe_strcpy(char *dest, const char *src, size_t dest_size) {
+int safe_strncpy(char *dest, const char *src, size_t dest_size) {
   if (dest == NULL || src == NULL || dest_size < 1) {
     log_message(LOG_ERROR, "Strncpy failed as src/dest is NULL, or dest_size < 1.");
     return -1;
@@ -47,7 +47,7 @@ int parse_int(const char *str, int len) {
     log_message(LOG_ERROR, "Birthday length exceeds buffer size.");
     return -1;
   }
-  safe_strcpy(buf, str, len+1);
+  safe_strncpy(buf, str, len+1);
   char *end;
   long val = strtol(buf, &end, 10);
   if (*end != '\0') {
@@ -98,7 +98,7 @@ userid_t *validate_userid(const char *userid) {
     return NULL;
   }
 
-  safe_strcpy(valid_userid->userid, userid, USER_ID_LENGTH);
+  safe_strncpy(valid_userid->userid, userid, USER_ID_LENGTH);
 
   return valid_userid;
 }
@@ -142,7 +142,7 @@ userid_t *validate_userid(const char *userid) {
       return NULL;
     }
 
-    safe_strcpy(valid_email->email, email, EMAIL_LENGTH);
+    safe_strncpy(valid_email->email, email, EMAIL_LENGTH);
 
     return valid_email;
   }
@@ -200,54 +200,50 @@ typedef struct {
   char date[BIRTHDATE_LENGTH];
 } birthdate_t;
 
-/** 
+/**
  * @brief Validates the birthdate format and checks if it is a valid date.
- * 
- * This function checks if the birthdate string is in the format YYYY-MM-DD,
- * validates the year, month, and day, and ensures that the date is not in the future.
- * 
- * @param bday A valid, null-terminated string representing the birthdate to validate.
- * 
- * @return A pointer to a valid birthdate_t structure on success, or NULL on error with log_message(LOG_ERROR).
+ *
+ * This function verifies that the input string is in the format YYYY-MM-DD,
+ * checks for a valid calendar date. 
+ *
+ * The birthdate string must be exactly 10 characters long with hyphens in the
+ * correct positions (YYYY-MM-DD). Default value is 0000-00-00.
+ *
+ * @param bday A null-terminated string representing the birthdate to validate.
+ *
+ * @return A pointer to a valid birthdate_t structure on success,
+ *         or NULL on error (with log_message(LOG_ERROR) called).
  */
  birthdate_t *validate_birthdate(const char *bday) {  
-  for (int i = 0; i < BIRTHDATE_LENGTH; i++) {
+  if (strlen(bday) != BIRTHDATE_LENGTH) {
+    log_message(LOG_ERROR, "Birthdate must be in the format YYYY-MM-DD.");
+    return NULL;
+  }
+
+  for (int i = 0; i < BIRTHDATE_LENGTH; ++i) {
     if ((i == 4 || i == 7)) {
-        if (bday[i] != '-') {
-            log_message(LOG_ERROR, "Birthdate must be in the format YYYY-MM-DD with hyphens.");
-            return NULL;
-        }
-    } else {
-        if (!isdigit((unsigned char)bday[i])) {
-            log_message(LOG_ERROR, "Birthdate must be in the format YYYY-MM-DD with hyphens.");
-            return NULL;
-        }
+      if (bday[i] != '-') {
+        log_message(LOG_ERROR, "Birthdate format error: missing hyphens.");
+        return NULL;
+      }
+    } else if (!isdigit((unsigned char)bday[i])) {
+      log_message(LOG_ERROR, "Birthdate format error: non-digit characters found.");
+      return NULL;
     }
-}
-  
-  int year = parse_int(bday, 4); 
-  int month = parse_int(bday + 5, 2);
-  int day = parse_int(bday + 8, 2);
-  if (year < 1900 || month < 1 || month > 12) {
-    log_message(LOG_ERROR, "Invalid year or month for birthdate.");
+  } 
+
+  char buf[BIRTHDATE_LENGTH + 1];
+  safe_strncpy(buf, bday, BIRTHDATE_LENGTH + 1);
+
+  struct tm tm = {0};
+  if (strptime(buf, "%Y-%m-%d", &tm) == NULL) {
+    log_message(LOG_ERROR, "Invalid birthdat format or values.");
     return NULL;
   }
 
-  int days_in_month[] = { 31, (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0) ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
-
-  if (day < 1 || day > days_in_month[month - 1]) {
-    log_message(LOG_ERROR, "Invalid day for birthdate month.");
-    return NULL;
-  }
-
-  struct tm input_tm = {0};
-  input_tm.tm_year = year - 1900;
-  input_tm.tm_mon = month - 1;
-  input_tm.tm_mday = day;
-
-  time_t input_time = mktime(&input_tm);
-  if (input_time == -1 || difftime(input_time, time(NULL)) > 0) {
-    log_message(LOG_ERROR, "Birthdate cannot be in the future.");
+  tm.tm_isdst = -1;
+  if (mktime(&tm) == -1) {
+    log_message(LOG_ERROR, "Invalid birthdate value.");
     return NULL;
   }
 
@@ -257,7 +253,7 @@ typedef struct {
     return NULL;
   }  
 
-  memcpy(valid_bday->date, bday, BIRTHDATE_LENGTH);
+  safe_strncpy(valid_bday->date, bday, BIRTHDATE_LENGTH+1);
   return valid_bday;
 }
 
@@ -301,29 +297,15 @@ account_t *account_create(const char *userid, const char *plaintext_password,
     account_free(new_account);
     return NULL;
   }
-  safe_strcpy(new_account->userid, valid_userid->userid, USER_ID_LENGTH);
+  safe_strncpy(new_account->userid, valid_userid->userid, USER_ID_LENGTH + 1);
   free(valid_userid);
-
-  if ( plaintext_password[0] == '\0' ) {
-    log_message(LOG_ERROR, "Password cannot be empty.");
-    account_free(new_account);
-    return NULL;
-  }
-
-  for (const char *p = plaintext_password; *p != '\0'; p++) {
-    if (!isprint((unsigned char)*p) || isspace((unsigned char)*p)) {
-      log_message(LOG_ERROR, "Invalid password format. Password must be ASCII printable and contain no spaces.");
-      free(new_account);
-      return NULL;
-    }
-  }
 
   pwhash_t *hashed_password = hash_password(plaintext_password);
   if (hashed_password == NULL) {
     account_free(new_account);
     return NULL;
   }
-  safe_strcpy(new_account->password_hash, hashed_password->hash, HASH_LENGTH);
+  safe_strncpy(new_account->password_hash, hashed_password->hash, HASH_LENGTH + 1);
   free(hashed_password);
 
   account_set_email(new_account, email);
@@ -333,7 +315,7 @@ account_t *account_create(const char *userid, const char *plaintext_password,
     account_free(new_account);
     return NULL;
   }
-  memcpy(new_account->birthdate, valid_bday->date, BIRTHDATE_LENGTH);
+  memcpy(new_account->birthdate, valid_bday->date, BIRTHDATE_LENGTH + 1);
   free(valid_bday);
 
   return new_account;
@@ -430,7 +412,7 @@ bool account_update_password(account_t *acc, const char *new_plaintext_password)
   }
 
   sodium_memzero(acc->password_hash, HASH_LENGTH);    // Erase old pw 
-  safe_strcpy(acc->password_hash, new_hashed_pw->hash, HASH_LENGTH);
+  safe_strncpy(acc->password_hash, new_hashed_pw->hash, HASH_LENGTH);
   free(new_hashed_pw);
 
   return true;
@@ -611,7 +593,7 @@ void account_set_email(account_t *acc, const char *new_email) {
   }
 
   // May need to add thread-locking? 
-  safe_strcpy(acc->email, valid_new_email->email, EMAIL_LENGTH);
+  safe_strncpy(acc->email, valid_new_email->email, EMAIL_LENGTH);
   free(valid_new_email);
 }
 
