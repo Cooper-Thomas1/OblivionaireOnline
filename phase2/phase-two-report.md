@@ -36,7 +36,7 @@ Our group decided upon discussing the rubric to assume the following:
 
 - **Thread safety handling**  
   We assume that thread safety is managed by the caller or higher-level components. Our functions do not modify shared global state, so internal thread-safety mechanisms would be unnecessary and potentially over-engineered for our low-level implementations.  
-  `account_t` itself is not necessarily global or shared, but rather how instances of it are accessed (e.g., in `alternate_main.c`). Thus, our team in implementing phase 2 are not responsible for thread safety, rather the callers.
+  `account_t` itself is not necessarily global or shared, but rather how instances of it are accessed (e.g., in `alternate_main.~~~~c`). Thus, our team in implementing phase 2 are not responsible for thread safety, rather the callers.
 
 ### DIFFICULTIES WE ENCOUNTERED
 

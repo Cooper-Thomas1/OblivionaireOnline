@@ -51,8 +51,19 @@ PKG_LDFLAGS := $(if $(strip $(PKG_DEPS)),$(shell pkg-config --libs $(PKG_DEPS)))
 # This is helpful when testing your code locally, even though we will
 # not necessarily use the same flags when testing your code.
 DEBUG = -g -fno-omit-frame-pointer
-CFLAGS = $(DEBUG) -std=c11 -pedantic-errors -Wall -Wextra $(INC_FLAGS) $(PKG_CFLAGS)
-LDFLAGS = $(PKG_LDFLAGS)
+CFLAGS = $(DEBUG) -std=c11 -pedantic-errors -Wall -Wextra \
+         -Wshadow -Wconversion -Wformat=2 -Wcast-align \
+         -Wpointer-arith -Wstrict-overflow=5 -Wswitch-enum \
+         -Wunreachable-code -Winit-self -Wfloat-equal \
+         -Wundef -Wbad-function-cast -Wcast-qual \
+         -Wwrite-strings -Wlogical-op -Wredundant-decls \
+         -Wold-style-definition -Wmissing-prototypes \
+         -Wstrict-prototypes -Wno-unused-result \
+         -fstack-protector-strong -fPIE -D_FORTIFY_SOURCE=2 \
+         -fsanitize=address,undefined \
+         -fno-omit-frame-pointer -fno-common -O2 $(INC_FLAGS) $(PKG_CFLAGS)
+
+LDFLAGS = -Wl,-z,relro,-z,now -pie $(PKG_LDFLAGS)
 
 # how to make a .c file from a .ts file
 %.c: %.ts
