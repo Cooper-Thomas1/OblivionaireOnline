@@ -42,11 +42,11 @@ void log_message(log_level_t level, const char *fmt, ...) {
   va_list args;
   va_start(args, fmt);
   switch (level) {
-    case LOG_DEBUG:
+    case LOG_DEBUG: 
       fprintf(stderr, "DEBUG: ");
       break;
     case LOG_INFO:
-      fprintf(stdout, "INFO: ");
+      fprintf(stderr, "INFO: ");    // CHANGED to use stderr
       break;
     case LOG_WARN:
       fprintf(stderr, "WARNING: ");

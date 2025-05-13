@@ -466,6 +466,7 @@ int main(void) {
 }
 #endif // test_9
 
+#ifdef TEST_10
 int main(void) // all empty fields
 {
     account_t *acc = account_create(
@@ -507,3 +508,4 @@ int main(void) // all empty fields
     account_free(acc);
     return 0;
 }
+#endif // test_10
