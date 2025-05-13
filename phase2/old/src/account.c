@@ -64,46 +64,46 @@ typedef struct{
   char userid[USER_ID_LENGTH];
 } userid_t;
 
-/**
- * @brief Validate userid helper function
- * 
- * This function checks if the userid provided is "consisting
- * of only ASCII, printable characters (according to the C standard)
- * and must not contain any spaces".
- * 
- * @param userid A valid, null-terminated string representing the user ID to validate.
- * 
- * @return A pointer to a valid userid_t structure on success, 
- * or NULL on error with log_message(LOG_ERROR).
- */
-userid_t *validate_userid(const char *userid) {
-  if (strlen(userid) >= USER_ID_LENGTH) {
-    log_message(LOG_ERROR, "Userid exceeds maximum length.");
-    return NULL;
-  }
+// /**
+//  * @brief Validate userid helper function
+//  * 
+//  * This function checks if the userid provided is "consisting
+//  * of only ASCII, printable characters (according to the C standard)
+//  * and must not contain any spaces".
+//  * 
+//  * @param userid A valid, null-terminated string representing the user ID to validate.
+//  * 
+//  * @return A pointer to a valid userid_t structure on success, 
+//  * or NULL on error with log_message(LOG_ERROR).
+//  */
+// userid_t *validate_userid(const char *userid) {
+//   if (strlen(userid) >= USER_ID_LENGTH) {
+//     log_message(LOG_ERROR, "Userid exceeds maximum length.");
+//     return NULL;
+//   }
 
-  if (userid[0] == '\0') {
-    log_message(LOG_ERROR,"User ID cannot be empty.");
-    return NULL;
-  }
+//   if (userid[0] == '\0') {
+//     log_message(LOG_ERROR,"User ID cannot be empty.");
+//     return NULL;
+//   }
 
-  for (const char *p = userid; *p != '\0'; p++) {
-    if (!isprint((unsigned char)*p) || isspace((unsigned char)*p)) {
-      log_message(LOG_ERROR, "Invalid userid format. userid must be ASCII printable and contain no spaces.");
-      return NULL;
-    }
-  }
+//   for (const char *p = userid; *p != '\0'; p++) {
+//     if (!isprint((unsigned char)*p) || isspace((unsigned char)*p)) {
+//       log_message(LOG_ERROR, "Invalid userid format. userid must be ASCII printable and contain no spaces.");
+//       return NULL;
+//     }
+//   }
 
-  userid_t *valid_userid = malloc(sizeof(userid_t));
-  if (valid_userid == NULL) {
-    log_message(LOG_ERROR, "Memory allocation failed for valid_userid.");
-    return NULL;
-  }
+//   userid_t *valid_userid = malloc(sizeof(userid_t));
+//   if (valid_userid == NULL) {
+//     log_message(LOG_ERROR, "Memory allocation failed for valid_userid.");
+//     return NULL;
+//   }
 
-  safe_strncpy(valid_userid->userid, userid, USER_ID_LENGTH);
+//   safe_strncpy(valid_userid->userid, userid, USER_ID_LENGTH);
 
-  return valid_userid;
-}
+//   return valid_userid;
+// }
 
 // Validated emails go in here
 typedef struct {
@@ -290,11 +290,11 @@ account_t *account_create(const char *userid, const char *plaintext_password,
 
   sodium_memzero(new_account, sizeof(account_t));
 
-  userid_t *valid_userid = validate_userid(userid);
-  if (!(valid_userid)) {
-    account_free(new_account);
-    return NULL;
-  }
+  // userid_t *valid_userid = validate_userid(userid);
+  // if (!(valid_userid)) {
+  //   account_free(new_account);
+  //   return NULL;
+  // }
   safe_strncpy(new_account->userid, valid_userid->userid, USER_ID_LENGTH + 1);
   free(valid_userid);
 
