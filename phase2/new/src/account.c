@@ -9,62 +9,39 @@
 #include <unistd.h>
 #include "banned.h"
 
-// Validated inputs go here
-typedef struct {
-  char email[EMAIL_LENGTH+1];
-} email_t;
+// Returns true if valid, false if not. If valid, out_len is set to the length to store.
+bool validate_email(const char *email, size_t *out_len);
 
-typedef struct {
-  char hash[HASH_LENGTH+1];
-} pwhash_t;
+// Returns true if valid, false if not. If valid, out_len is set to the length to store.
+bool validate_birthdate(const char *bday, size_t *out_len);
 
-typedef struct {
-  char date[BIRTHDATE_LENGTH+1];
-} birthdate_t;
+// Hashes password into out_hash (must be at least HASH_LENGTH+1 bytes). Returns true on success.
+bool hash_password(const char *pw, char *out_hash);
 
-int safe_strncpy(char *dest, const char *src, size_t dest_size);
-email_t *validate_email(const char *email);
-pwhash_t *hash_password(const char* pw);
-birthdate_t *validate_birthdate(const char *bday);
-
-
-/**
- * @brief Safely copies a string with guaranteed null-termination.
- *
- * Copies up to dest_size-1 characters from src to dest, always null-terminating dest.
- *
- * @param dest Destination buffer.
- * @param src  Source null-terminated string.
- * @param dest_size Size of the destination buffer.
- * @return 0 on success, -1 if dest_size < 1.
- */
-int safe_strncpy(char *dest, const char *src, size_t dest_size) {
-  if (dest_size < 1) {
-    log_message(LOG_WARN, "Strncpy failed as dest_size < 1.");
-    return -1;
-  }
-
-  strncpy(dest, src, dest_size -1);
-  dest[dest_size-1] = '\0';
-  return 0;
-}
+// Safe memcpy for fixed-length fields (returns number of bytes copied, or -1 on error).
+int safe_memcpy(char *dest, const char *src, size_t max_len);
 
 
 /**
  * @brief Validates that an email is ASCII printable and contains no spaces.
  *
- * If the email is longer than EMAIL_LENGTH, it will be truncated.
- * 
- * @param email Null-terminated string to validate.
- * @return Pointer to a valid email_t struct on success, NULL on error (logs error).
+ * The email must be a null-terminated string of length 1 to EMAIL_LENGTH (inclusive),
+ * containing only printable ASCII characters and no spaces.
+ *
+ * @param email    Null-terminated string to validate.
+ * @param out_len  Optional pointer to size_t to receive the length of the validated email (may be NULL).
+ * @return true if the email is valid, false otherwise (logs error on failure).
  */
-email_t *validate_email(const char *email) {
-  for (const char *p = email; *p != '\0'; p++) {
-    if (!isprint((unsigned char)*p) || isspace((unsigned char)*p)) {
+bool validate_email(const char *email, size_t *out_len) {
+  size_t len = strnlen(email, EMAIL_LENGTH);
+  for (size_t i = 0; i < len; ++i) {
+    if (!isprint((unsigned char)*email[i]) || isspace((unsigned char)*email[i])) {
       log_message(LOG_ERROR, "Invalid email format. Email must be ASCII printable and contain no spaces.");
-      return NULL;
+      return false;
     }
   }
+  if (out_len) *out_len = len;
+  return true;
 
   email_t *valid_email = malloc(sizeof(email_t));
   if (valid_email == NULL) {
@@ -78,105 +55,53 @@ email_t *validate_email(const char *email) {
 
 
 /**
- * @brief Hashes the provided password using libsodium library (Argon2)
- * 
- * Reference: Password hashing API - Libsodium documentation
- * @ref https://doc.libsodium.org/password_hashing/default_phf
- * "On POSIX systems, everything in libsodium is guaranteed to be thread-safe."
- *
- * @param pw The plaintext password to be hashed.
- * 
- * @return NULL on fail to hash (with log_message(LOG_ERROR)), else pwhash_t valid_hash. 
- * 
- */
-pwhash_t *hash_password(const char* pw) {
-  if (sodium_init() < 0) {
-    log_message(LOG_ERROR, "Failed to initialise the sodium library.");
-    return NULL;
-  }
-  pwhash_t *valid_hash = malloc(sizeof(pwhash_t));
-  if (valid_hash == NULL) {
-    log_message(LOG_ERROR, "Failed to allocate memory for password hash.");
-    return NULL;
-  }
-  if (crypto_pwhash_str_alg(
-    valid_hash->hash,
-    pw,
-    strlen(pw),
-    crypto_pwhash_OPSLIMIT_INTERACTIVE,
-    crypto_pwhash_MEMLIMIT_INTERACTIVE,
-    crypto_pwhash_ALG_ARGON2ID13
-  ) != 0) {
-    log_message(LOG_ERROR, "Password hashing failed.");
-    free(valid_hash);
-    return NULL;
-  }
-  return valid_hash;
-}
-
-
-/**
  * @brief Validates a birthdate string for correct format and calendar validity.
  *
- * This function checks that the input string is exactly 10 characters long and matches
- * the format YYYY-MM-DD, with hyphens in the correct positions and digits elsewhere.
- * It then verifies that the date is a valid calendar date (e.g., not 2024-02-30).
+ * The birthdate must be a null-terminated string of exactly BIRTHDATE_LENGTH (10) characters,
+ * in the format YYYY-MM-DD, with hyphens in the correct positions and digits elsewhere.
+ * The default value "0000-00-00" is allowed. If valid, optionally sets out_len to BIRTHDATE_LENGTH.
  *
- * @param bday A non-NULL, null-terminated string representing the birthdate to validate.
- *             Must be in the format YYYY-MM-DD. The default value "0000-00-00" is allowed.
- *
- * @return A pointer to a heap-allocated birthdate_t structure containing the validated date
- *         on success, or NULL on error (with log_message(LOG_ERROR) called).
- *
- * @note The caller is responsible for freeing the returned structure.
- * @note Returns NULL if the input is NULL, not the correct length, not in the correct format,
- *       or not a valid calendar date.
+ * @param bday    Null-terminated string representing the birthdate to validate.
+ * @param out_len Optional pointer to size_t to receive the length of the validated birthdate (may be NULL).
+ * @return true if the birthdate is valid, false otherwise (logs error on failure).
  */
-birthdate_t *validate_birthdate(const char *bday) {  
+bool validate_birthdate(const char *bday, size_t *out_len) {  
   if (strlen(bday) != BIRTHDATE_LENGTH) {
     log_message(LOG_ERROR, "Birthdate must be in the format YYYY-MM-DD.");
-    return NULL;
+    return false;
   }
 
   if (strcmp(bday, "0000-00-00") == 0) {
-    birthdate_t *default_bday = malloc(sizeof(birthdate_t));
-    if (default_bday == NULL) {
-      log_message(LOG_ERROR, "Failed to malloc space for default birthdate.");
-      return NULL;
-    }
-    safe_strncpy(default_bday->date, bday, BIRTHDATE_LENGTH + 1);
-    return default_bday;
+    if (out_len) *out_len = BIRTHDATE_LENGTH;
+    return true;
   }
 
   for (int i = 0; i < BIRTHDATE_LENGTH; ++i) {
     if ((i == 4 || i == 7)) {
       if (bday[i] != '-') {
         log_message(LOG_ERROR, "Birthdate format error: missing hyphens.");
-        return NULL;
+        return false;
       }
     } else if (!isdigit((unsigned char)bday[i])) {
       log_message(LOG_ERROR, "Birthdate format error: non-digit characters found.");
-      return NULL;
+      return false;
     }
   } 
-
-  char buf[BIRTHDATE_LENGTH + 1];
-  safe_strncpy(buf, bday, BIRTHDATE_LENGTH + 1);
 
   struct tm tm = {0};
   // strptime version (recommended, but may not be available on all platforms e.g. my Windows)
   /*
-  if (strptime(buf, "%Y-%m-%d", &tm) == NULL) {
+  if (strptime(bday, "%Y-%m-%d", &tm) == NULL) {
     log_message(LOG_ERROR, "Invalid birthdate format or values.");
-    return NULL;
+    return false;
   }
   */
 
   // sscanf version (manual parsing, less robust)
   int year, month, day;
-  if (sscanf(buf, "%4d-%2d-%2d", &year, &month, &day) != 3) {
+  if (sscanf(bday, "%4d-%2d-%2d", &year, &month, &day) != 3) {
     log_message(LOG_ERROR, "Invalid birthdate format or values (sscanf).");
-    return NULL;
+    return false;
   }
   tm.tm_year = year - 1900;
   tm.tm_mon = month - 1;
@@ -184,19 +109,53 @@ birthdate_t *validate_birthdate(const char *bday) {
   ////
 
   tm.tm_isdst = -1;
-  if (mktime(&tm) == -1) {
+  time_t t = mktime(&tm);
+  if (t == -1 || tm.tm_year != year - 1900 || tm.tm_mon != month - 1 || tm.tm_mday != day) {
     log_message(LOG_ERROR, "Invalid birthdate value.");
-    return NULL;
+    return false;
   }
 
-  birthdate_t *valid_bday = malloc(sizeof(birthdate_t));
-  if (valid_bday == NULL) {
-    log_message(LOG_ERROR, "Failed to malloc space for valid birthdate.");
-    return NULL;
-  }  
+  if (out_len) *out_len = BIRTHDATE_LENGTH;
+  return true;
+}
 
-  safe_strncpy(valid_bday->date, bday, BIRTHDATE_LENGTH+1);
-  return valid_bday;
+
+/**
+ * @brief Hashes the provided password using libsodium Argon2id.
+ *
+ * This function hashes the given plaintext password using libsodium's Argon2id algorithm
+ * and stores the result in the provided output buffer. The output buffer must be at least
+ * HASH_LENGTH + 1 bytes to accommodate the null-terminated hash string.
+ * 
+ * Reference: Password hashing API - Libsodium documentation
+ * @ref https://doc.libsodium.org/password_hashing/default_phf
+ *
+ * @param pw           Null-terminated plaintext password to hash.
+ * @param out_hash     Output buffer for the hash (must be at least HASH_LENGTH + 1 bytes).
+ * @param out_hash_len Length of the output buffer.
+ * @return true on success, false on failure (logs error).
+ */
+bool hash_password(const char *pw, char *out_hash, size_t out_hash_len) {
+  if (out_hash_len < HASH_LENGTH + 1) {
+    log_message(LOG_ERROR, "Invalid arguments to hash_password.");
+    return false;
+  }
+  if (sodium_init() < 0) {
+    log_message(LOG_ERROR, "Failed to initialise the sodium library.");
+    return false;
+  }
+  if (crypto_pwhash_str_alg(
+    out_hash,
+    pw,
+    strlen(pw),
+    crypto_pwhash_OPSLIMIT_INTERACTIVE,
+    crypto_pwhash_MEMLIMIT_INTERACTIVE,
+    crypto_pwhash_ALG_ARGON2ID13
+  ) != 0) {
+    log_message(LOG_ERROR, "Password hashing failed.");
+    return false;
+  }
+  return true;
 }
 
 
@@ -229,36 +188,35 @@ account_t *account_create(const char *userid, const char *plaintext_password,
                       )
 {
   account_t *new_account = malloc(sizeof(account_t));
-  if (new_account == NULL) {
+  if (!new_account) {
     log_message(LOG_ERROR, "Memory allocation failed for new account.");
     return NULL;
   }
-
   sodium_memzero(new_account, sizeof(account_t));
 
-  pwhash_t *hashed_password = hash_password(plaintext_password);
-  if (hashed_password == NULL) {
+  char hash_buf[HASH_LENGTH+1];
+  if (!hash_password(plaintext_password, hash_buf, sizeof(hash_buf))) {
     account_free(new_account);
     return NULL;
   }
-  safe_strncpy(new_account->password_hash, hashed_password->hash, HASH_LENGTH + 1);
-  free(hashed_password);
+  safe_memcpy(new_account->password_hash, hash_buf, HASH_LENGTH);
 
-  email_t *valid_email = validate_email(email);
-  if (!(valid_email)) {
+  size_t email_len;
+  if (!validate_email(email, &email_len)) {
     account_free(new_account);
     return NULL;
   }
-  safe_strncpy(new_account->email, valid_email->email, EMAIL_LENGTH + 1);
-  free(valid_email);
+  safe_memcpy(new_account->email, email, email_len);
 
-  birthdate_t *valid_bday = validate_birthdate(birthdate);
-  if (!(valid_bday)) {
+  size_t bday_len;
+  if (!validate_birthdate(birthdate, &bday_len)) {
     account_free(new_account);
     return NULL;
   }
-  safe_strncpy(new_account->birthdate, valid_bday->date, BIRTHDATE_LENGTH + 1);
-  free(valid_bday);
+  safe_memcpy(new_account->birthdate, birthdate, bday_len);
+
+  size_t userid_len = strnlen(userid, USER_ID_LENGTH);
+  safe_memcpy(new_account->userid, userid, userid_len);
 
   new_account->account_id = 0;
   new_account->unban_time = 0;
@@ -267,7 +225,6 @@ account_t *account_create(const char *userid, const char *plaintext_password,
   new_account->login_fail_count = 0;
   new_account->last_login_time = 0;
   new_account->last_ip = 0;
-  safe_strncpy(new_account->userid, userid, USER_ID_LENGTH+1);
 
   return new_account;
 }
@@ -446,7 +403,7 @@ void account_set_unban_time(account_t *acc, time_t t) {
  * @param t   The new expiration time as a timestamp. 
  */
 void account_set_expiration_time(account_t *acc, time_t t) {
-  acc->unban_time = t;
+  acc->expiration_time = t;
 }
 
 
