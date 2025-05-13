@@ -332,7 +332,6 @@ int main(void) {    // test all functions
 #include <time.h>
 #include <stdlib.h>
 #include "account.h"
-#include "banned.h"
 #define MAX_TIME_T ((time_t)(~(time_t)0 >> 1))
 
 int main(void) {
@@ -466,3 +465,45 @@ int main(void) {
     return 0;
 }
 #endif // test_9
+
+int main(void) // all empty fields
+{
+    account_t *acc = account_create(
+        "",
+        "",
+        "",
+        ""
+    );
+    if (!acc) {
+        dprintf(STDOUT_FILENO, "Failed to create account.\n");
+        return 1;
+    }
+    if (!account_print_summary(acc, STDOUT_FILENO)) {
+        dprintf(STDOUT_FILENO, "Failed to print account summary.\n");
+    }
+    if (account_validate_password(acc, "")) {
+        dprintf(STDOUT_FILENO, "Password validation succeeded.\n");
+    } else {
+        dprintf(STDOUT_FILENO, "Password validation failed.\n");
+    }
+    if (account_update_password(acc, "")) {
+        dprintf(STDOUT_FILENO, "Password updated.\n");
+    } else {
+        dprintf(STDOUT_FILENO, "Password update failed.\n");
+    }
+    if (account_validate_password(acc, "")) {
+        dprintf(STDOUT_FILENO, "New password validation succeeded.\n");
+    } else {
+        dprintf(STDOUT_FILENO, "New password validation failed.\n");
+    }
+    account_record_login_success(acc, 127001);
+     if (acc->login_count == 1) {
+        dprintf(STDOUT_FILENO, "Login success recorded.\n");
+    } else {
+        dprintf(STDOUT_FILENO, "Failed to record login success.\n");
+    }
+    account_set_email(acc, "");
+    account_print_summary(acc, STDOUT_FILENO);
+    account_free(acc);
+    return 0;
+}
