@@ -1,3 +1,4 @@
+#define _POSIX_C_SOURCE 200809L
 #include "account.h"
 #include "logging.h"
 #include <sodium.h>
@@ -7,7 +8,6 @@
 #include <stdint.h>
 #include <arpa/inet.h>
 #include <unistd.h>
-#include "banned.h"
 
 // Returns true if valid, false if not. If valid, out_len is set to the length to store.
 bool validate_email(const char *email, size_t *out_len);
@@ -16,7 +16,7 @@ bool validate_email(const char *email, size_t *out_len);
 bool validate_birthdate(const char *bday, size_t *out_len);
 
 // Hashes password into out_hash (must be at least HASH_LENGTH+1 bytes). Returns true on success.
-bool hash_password(const char *pw, char *out_hash);
+bool hash_password(const char *pw, char *out_hash, size_t out_hash_len);
 
 // Safe memcpy for fixed-length fields (returns number of bytes copied, or -1 on error).
 int safe_memcpy(char *dest, const char *src, size_t max_len);
@@ -35,22 +35,13 @@ int safe_memcpy(char *dest, const char *src, size_t max_len);
 bool validate_email(const char *email, size_t *out_len) {
   size_t len = strnlen(email, EMAIL_LENGTH);
   for (size_t i = 0; i < len; ++i) {
-    if (!isprint((unsigned char)*email[i]) || isspace((unsigned char)*email[i])) {
+    if (!isprint((unsigned char)email[i]) || isspace((unsigned char)email[i])) {
       log_message(LOG_ERROR, "Invalid email format. Email must be ASCII printable and contain no spaces.");
       return false;
     }
   }
   if (out_len) *out_len = len;
   return true;
-
-  email_t *valid_email = malloc(sizeof(email_t));
-  if (valid_email == NULL) {
-    log_message(LOG_ERROR, "Memory allocation failed for valid_email.");
-    return NULL;
-  }
-
-  safe_strncpy(valid_email->email, email, EMAIL_LENGTH+1);
-  return valid_email;
 }
 
 
@@ -156,6 +147,33 @@ bool hash_password(const char *pw, char *out_hash, size_t out_hash_len) {
     return false;
   }
   return true;
+}
+
+
+/**
+ * @brief Safely copies up to max_len bytes from src to dest.
+ *
+ * Copies exactly max_len bytes from src to dest. If max_len is 0,
+ * log an error and returns -1. If src and dest overlap, logs an error and returns -1.
+ *
+ * @param dest    Destination buffer.
+ * @param src     Source buffer.
+ * @param max_len Maximum number of bytes to copy.
+ * @return Number of bytes copied on success, -1 on error.
+ */
+int safe_memcpy(char *dest, const char *src, size_t max_len) {
+    if (max_len <= 0) {
+        log_message(LOG_ERROR, "safe_memcpy: Invalid arguments.");
+        return -1;
+    }
+    // Check for overlap
+    if ((src < dest && src + max_len > dest) ||
+        (dest < src && dest + max_len > src)) {
+        log_message(LOG_ERROR, "safe_memcpy: Source and destination buffers overlap.");
+        return -1;
+    }
+    memcpy(dest, src, max_len);
+    return (int)max_len;
 }
 
 
@@ -288,23 +306,20 @@ bool account_validate_password(const account_t *acc, const char *plaintext_passw
  * @param acc Pointer to the account structure to update (must not be NULL).
  * @param new_plaintext_password Null-terminated string containing the new password (must not be NULL).
  *
- * @pre @p acc and @p plaintext_password must not be NULL.
- * @pre @p plaintext_password must be a valid, null-terminated string.
+ * @pre acc and new_plaintext_password must not be NULL.
+ * @pre new_plaintext_password must be a valid, null-terminated string.
  *
  * @return true on success, false on failure (with error logged).
  *
  * @note The function securely erases the old password hash before updating.
  */
 bool account_update_password(account_t *acc, const char *new_plaintext_password) {
-  pwhash_t *new_hashed_pw = hash_password(new_plaintext_password);
-  if (!(new_hashed_pw)) {
+  char new_hash_buf[HASH_LENGTH+1];
+  if (!hash_password(new_plaintext_password, new_hash_buf, sizeof(new_hash_buf))) {
     return false;
   }
-
-  sodium_memzero(acc->password_hash, HASH_LENGTH);    // Erase old pw 
-  safe_strncpy(acc->password_hash, new_hashed_pw->hash, HASH_LENGTH);
-  free(new_hashed_pw);
-
+  sodium_memzero(acc->password_hash, HASH_LENGTH);
+  safe_memcpy(acc->password_hash, new_hash_buf, HASH_LENGTH);
   return true;
 }
 
@@ -420,10 +435,12 @@ void account_set_expiration_time(account_t *acc, time_t t) {
  * @pre new_email != NULL
  */
 void account_set_email(account_t *acc, const char *new_email) {
-  if (!validate_email(new_email)) {
+  size_t new_email_len;
+  if (!validate_email(new_email, &new_email_len)) {
     return;
   }
-  safe_strncpy(acc->email, new_email, EMAIL_LENGTH+1);
+  sodium_memzero(acc->email, EMAIL_LENGTH);
+  safe_memcpy(acc->email, new_email, new_email_len);
 }
 
 
@@ -444,8 +461,10 @@ void account_set_email(account_t *acc, const char *new_email) {
 bool account_print_summary(const account_t *acct, int fd) {
   char safe_userid[USER_ID_LENGTH + 1];
   char safe_email[EMAIL_LENGTH + 1];
-  safe_strncpy(safe_userid, acct->userid, USER_ID_LENGTH + 1);
-  safe_strncpy(safe_email, acct->email, EMAIL_LENGTH + 1);
+  safe_memcpy(safe_userid, acct->userid, USER_ID_LENGTH);
+  safe_memcpy(safe_email, acct->email, EMAIL_LENGTH);
+  safe_userid[USER_ID_LENGTH] = '\0';
+  safe_email[EMAIL_LENGTH] = '\0';
 
   char time_buf[64];
   struct tm tm_info;
@@ -482,6 +501,6 @@ bool account_print_summary(const account_t *acct, int fd) {
   if (len < 0) {
     return false;
   }
-  return write(fd, outbuf, (size_t)len) == (size_t)len;
+  return (size_t)write(fd, outbuf, (size_t)len) == (size_t)len;
 }
 
