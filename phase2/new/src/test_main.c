@@ -4,6 +4,7 @@
 #include <unistd.h>
 #include "banned.h"
 
+#ifdef TEST_1
 int main(void) {
     account_t *acc = account_create(
         "testuser",
@@ -46,3 +47,6 @@ int main(void) {
 
     return 0;
 }
+#endif // test_1
+
+// #ifdef test_2
