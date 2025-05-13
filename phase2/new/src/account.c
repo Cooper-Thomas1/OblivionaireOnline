@@ -154,7 +154,7 @@ bool hash_password(const char *pw, char *out_hash, size_t out_hash_len) {
  * @brief Safely copies up to max_len bytes from src to dest.
  *
  * Copies exactly max_len bytes from src to dest. If max_len is 0,
- * log an error and returns -1. If src and dest overlap, logs an error and returns -1.
+ * nothing to copy, return 0. If src and dest overlap, logs an error and returns -1.
  *
  * @param dest    Destination buffer.
  * @param src     Source buffer.
@@ -162,9 +162,8 @@ bool hash_password(const char *pw, char *out_hash, size_t out_hash_len) {
  * @return Number of bytes copied on success, -1 on error.
  */
 int safe_memcpy(char *dest, const char *src, size_t max_len) {
-    if (max_len <= 0) {
-        log_message(LOG_ERROR, "safe_memcpy: Invalid arguments.");
-        return -1;
+    if (max_len == 0) {
+        return 0;
     }
     // Check for overlap
     if ((src < dest && src + max_len > dest) ||
@@ -268,7 +267,6 @@ void account_free(account_t *acc) {
   }
   sodium_memzero(acc, sizeof(account_t));
   free(acc);
-  log_message(LOG_INFO, "Account memory freed successfully.");
 }
 
 
