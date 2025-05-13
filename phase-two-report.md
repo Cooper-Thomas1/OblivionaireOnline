@@ -7,29 +7,30 @@ const char *email, const char *birthdate);
 | Design Decision | Justification |
 | --------------- | ------------- |
 | **Explicit null termination** | `strncpy()` doesnt guarantee null termination if the source string exceeds buffer length. Explicit null termination corrects this. |
-| **Bounded string copy using `strncpy()`** | Prevents buffer overflow by ensuring none of the values parsed to the function exceed their respective buffer length. |
+| **Bounded string copy using `safe_strcpy()`** | Prevents buffer overflow by ensuring none of the values parsed to the function exceed their respective buffer length. |
 | **Use `sodium_memzero()` to intialise account_t structure** | Ensures all fields are set to 0 before working with them, makes default values predictable and secure. In some cases `memset()` can be optimised out, so this a better alternative. |
 | **Validate email to ensure only printable, non whitespace ASCII characters are used** | Prevents injection attacks, keeps data clean and avoids potential issues with handling data later. |
 | **Check for valid birthdate, including leap years and future** | Improves data intergrity, ensures users birthdates are real, prevents any issues when working with dates later. |
 | **Free allocated memory on failure** | Using `free(new_account);` immediately followed by `return NULL;` when validation fails prevents dangling pointers and memory leaks and ensures clean failure. |
+| **Use custom function `parse_int()` to copy birthdate value** | Created a custom function for reading the birthdate input value. `parse_int()` safely copies the string to a buffer and converts it to an integer while performing some additional safety checks. |
 
 | Difficulty Encountered | Remedy |
 | ---------------------- | ------ |
-| **Ensuring null termination when copying** | For each value set `value[VALUE_LENGTH - 1] = '\0'` to guarantee a null terminated string. |
-| **Validating Birthdate** | Used `sscanf()` for formatting and other checks to ensure the date was real including leap years. |
+| **Ensuring null termination when copying** | Calling custom function `safe_strcpy()` to ensure that all values are properly null terminated. |
+| **Validating Birthdate** | Used custom function `parse_int()` to copy the input string and other checks to ensure the date was real accounting for leap years. |
 | **Validating Email** | Used `isprint()` and `isspace()` to ensure email consists of printable and non whitespace ASCII characters. |
-|  |        |
+| ||
 ```
 void account_free(account_t *acc);
 ```
 | Design Decision | Justification |
 | --------------- | ------------- |
 | **Check for null inputs** | `if(acc == NULL)` protects against dereferencing a null pointer which would cause undefined behaviour. |
-| **Use `memset()` to zero all values before freeing** | Ensures sensitive account data has no way of being accessed after `free(acc)`. |
+| **Use `sodium_memzero()` to zero all values before freeing** | Ensures sensitive account data has no way of being accessed after `free(acc)`. |
 
 | Difficulty Encountered | Remedy 
 | ---------------------- | ------ |
-| **Sensitive data may still be accessible** | Using `memset()` to overwrite the memory reduces the chance that sensitive data still remains in memory after deallocation. |
+| **Sensitive data may still be accessible** | Using `_sodium_memzero()` to overwrite the memory reduces the chance that sensitive data still remains in memory after deallocation. |
 ```
 void account_set_email(account_t *acc, const char *new_email);
 ```
