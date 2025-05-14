@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <unistd.h>
 
-#ifdef TEST_1
+// #ifdef TEST_1
 int main(void) {
     account_t *acc = account_create(
         "testuser",
@@ -46,7 +46,7 @@ int main(void) {
 
     return 0;
 }
-#endif // test_1
+// #endif // test_1
 
 #ifdef TEST_2   // empty password
 int main(void) {
