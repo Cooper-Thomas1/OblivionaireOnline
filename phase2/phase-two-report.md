@@ -62,20 +62,20 @@ const char *email, const char *birthdate);
 
 | Design Decision | Justification |
 | --------------- | ------------- |
-| **Explicit null termination** | `strncpy()` doesnt guarantee null termination if the source string exceeds buffer length. Explicit null termination corrects this. |
-| **Bounded string copy using `safe_strcpy()`** | Prevents buffer overflow by ensuring none of the values parsed to the function exceed their respective buffer length. |
+| **Creating helper functions to validate account parameters, `validate_email()`, `validate_birthdate()`, `hash_password()`** | Improving readability and modularisation by creating helper functions to perform tasks needed to create the account. Allows for these functions to be called elsewhere if needed. *Not sure if i should go into detail about what the functions do?* |
+| **Bounded string copy using `safe_memcpy()`** | Ensures memory safety by checking for buffer overflows and overlapping memory regions before copying data, helping to prevent undefined behavior and memory corruption. |
 | **Use `sodium_memzero()` to intialise account_t structure** | Ensures all fields are set to 0 before working with them, makes default values predictable and secure. In some cases `memset()` can be optimised out, so this a better alternative. |
+| **Use `strnlen()` before copying `userid`** | This prevents reading beyond the limits of the buffer. |
 | **Validate email to ensure only printable, non whitespace ASCII characters are used** | Prevents injection attacks, keeps data clean and avoids potential issues with handling data later. |
-| **Check for valid birthdate, including leap years and future** | Improves data intergrity, ensures users birthdates are real, prevents any issues when working with dates later. |
+| **Explicitly set account_t values to zero. e.g `new_account->account_id = 0;`** | Explicitly setting the values to 0 after using `sodium_memzero()` is to avoid any potential errors and it helps to improve readability. |
 | **Free allocated memory on failure** | Using `free(new_account);` immediately followed by `return NULL;` when validation fails prevents dangling pointers and memory leaks and ensures clean failure. |
-| **Use custom function `parse_int()` to copy birthdate value** | Created a custom function for reading the birthdate input value. `parse_int()` safely copies the string to a buffer and converts it to an integer while performing some additional safety checks. |
 
 | Difficulty Encountered | Remedy |
 | ---------------------- | ------ |
-| **Ensuring null termination when copying** | Calling custom function `safe_strcpy()` to ensure that all values are properly null terminated. |
-| **Validating Birthdate** | Used custom function `parse_int()` to copy the input string and other checks to ensure the date was real accounting for leap years. |
+| **Ensuring safe copying of inputs to avoid overflow issues** | Creating custom function `safe_memcpy()` to avoid any possible security issues when copying a user input. |
+| **Validating Birthdate** | Accounting for future dates using `time.h` library. Using potentially unsafe function `sscanf()` to read the birthdate is not an issue in our case as we know the value is a valid null terminated input |
 | **Validating Email** | Used `isprint()` and `isspace()` to ensure email consists of printable and non whitespace ASCII characters. |
-| ||
+| **Hashing Password**| Used the libsodium Argon2id algorithm to ensure effective hashing of the plaintext password. |
 ```
 void account_free(account_t *acc);
 ```
