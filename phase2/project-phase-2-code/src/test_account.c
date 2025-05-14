@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <unistd.h>
 
-// #ifdef TEST_1
+#ifdef TEST_1
 int main(void) {
     account_t *acc = account_create(
         "testuser",
@@ -46,7 +46,7 @@ int main(void) {
 
     return 0;
 }
-// #endif // test_1
+#endif // test_1
 
 #ifdef TEST_2   // empty password
 int main(void) {
@@ -518,7 +518,6 @@ int main(void) // all empty fields
 #include <string.h>
 #include <unistd.h> // for dprintf
 #include "login.h"
-#include "banned.h"
 
 int main(void) {
     login_session_data_t session;
@@ -544,3 +543,40 @@ int main(void) {
 }
 
 #endif // TEST_11
+
+// #ifdef TEST_12
+#include <string.h>
+int main(void) // Test same password hash
+{
+    account_t *acc = account_create(
+        "bob",
+        "password",
+        "bob@gmail.com",
+        "2000-01-01"
+    );
+    if (!acc) {
+        dprintf(STDOUT_FILENO, "Failed to create account.\n");
+        return 1;
+    }
+    dprintf(STDOUT_FILENO, "Password hash: %s\n", acc->password_hash);
+    account_t *acc2 = account_create(
+        "bob",
+        "password",
+        "bob@gmail.com",
+        "2000-01-01"
+    );
+    if (!acc2) {
+        dprintf(STDOUT_FILENO, "Failed to create account.\n");
+        return 1;
+    }
+    dprintf(STDOUT_FILENO, "Password hash: %s\n", acc2->password_hash);
+    if (strcmp(acc->password_hash, acc2->password_hash) == 0) {
+        dprintf(STDOUT_FILENO, "Password hashes are the same.\n");
+    } else {
+        dprintf(STDOUT_FILENO, "Password hashes are different.\n");
+    }
+    account_free(acc);
+    account_free(acc2);
+    return 0;
+}
+// #endif // TEST_12

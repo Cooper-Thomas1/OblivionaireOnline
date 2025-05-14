@@ -5,6 +5,7 @@
 #include <unistd.h>
 #include <errno.h>
 #include <limits.h>
+#include "banned.h"
 
 
 // Helper function to safely write to a file descriptor
