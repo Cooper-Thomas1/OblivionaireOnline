@@ -85,7 +85,7 @@ login_result_t handle_login(const char *userid, const char *password,
     return LOGIN_FAIL_ACCOUNT_BANNED;
   }
 
-  if (account.login_fail_count >= 10) {
+  if (account.login_fail_count > 10) {
     log_message(LOG_WARN, "Login failed: IP temporarily banned for user '%s'.", userid);
     safe_fd_message(client_output_fd, "Login failed: too many failed attempts.");
     return LOGIN_FAIL_IP_BANNED;
