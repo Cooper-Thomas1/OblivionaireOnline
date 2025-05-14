@@ -77,26 +77,23 @@ Our group faced the following issues when completing Phase 2, and we addressed t
 ```c
 bool validate_email(const char *email, size_t *out_len);
 ```
-
-- On bigger than `EMAIL_LENGTH` strings, then we assume that the caller did not intend that (i.e. pass an invalid length email). Thus we throw a warning and truncate to `EMAIL_LENGTH` the email into `account_t.email`, and carry on with the code.
-- On success copy the strlen of the amount of bytes to copy (up to `EMAIL_LENGTH`). This ensures the correct amount of bytes are copied in subsequent `memcpy` calls.
-- Issues with what we should constitute as a valid email. Does it need a "@" symbol? does it need characters on either side of the "@" symbol? Is the empty string valid? In the end, we decided to follow the project spec strictly, and only permit ASCII printable characters with no spaces. Thus the empty string is valid.
+- If the input email exceeds `EMAIL_LENGTH`, we assume this was unintended by the caller. In such cases, we log a warning, truncate the email to fit within the allowed length, and proceed with the operation.
+- On success, we use `strnlen()` to determine the number of bytes to copy (up to `EMAIL_LENGTH`), ensuring that `memcpy` only copies a valid and bounded range.
+- We also encountered ambiguity around what constitutes a "valid" email. Should it include an "@" symbol? Require characters on both sides of it? Allow empty strings? Ultimately, we chose to follow the project specification strictly and only accept ASCII-printable characters with no whitespace. By that definition, even an empty string is considered valid.
 
 ```c
 bool validate_birthdate(const char *bday, size_t *out_len);
 ```
-
-- Assumes that the caller can reasonably pass the string `0000-00-00` as a default value, and this is explicitly permitted. As given in `account.h`.
+- Assumes that the caller may reasonably provide `"0000-00-00"` as a default birthdate value, which is explicitly permitted in `account.h`.
 - Assumes all dates are permitted. This is strictly following the project specs.
 - Assumes the `time.h` library safely validates dates.
-- Had issues with the formatting of the birthdate string, as originally we were trying to store the NULL-terminator which would overwrite the 10th byte of the birthdate (which was incorrect). In the end, we decided to not store the NULL-terminator in the `account_t->birthdate` field to store the correct amount of bytes.
+- Initially, we encountered an issue with storing the birthdate string: attempting to include a null terminator caused us to overwrite the final byte of the fixed-length `birthdate` field. To resolve this, we chose not to store the null terminator in `account_t->birthdate`, ensuring the full 10-character date format is preserved as specified.
 
 ```c
 bool hash_password(const char *pw, char *out_hash, size_t out_hash_len);
 ```
-
-- Assumes that the `pw` string is small enough to be put into the `libsodium crypto_pwhash_str_alg()` call. Have stress tested and that it appears the arbitrary limits on C string sizes limit the strings first.
-- Issues with selecting a secure and easy to use crypto library, settled for `libsodium` with safe default values that seem to fit salt + hash into the `HASH_LENGTH` as defined in `account.h`, so stuck with it.
+- We assume the `pw` string is short enough to be safely passed into `libsodium`'s `crypto_pwhash_str_alg()`. In our testing, the C string length limits kicked in before anything broke on the libsodium side, so we didn’t run into practical issues.
+- We had to pick a crypto library that was both secure and easy to use. After some trial and error, we settled on `libsodium` because its defaults (e.g., Argon2id with built-in salt) worked well and the resulting hash fit within the `HASH_LENGTH` defined in `account.h`. So we stuck with it.
 
 ```c
 int safe_memcpy(char *dest, const char *src, size_t max_len);
@@ -104,7 +101,7 @@ int safe_memcpy(char *dest, const char *src, size_t max_len);
 
 - Designed to check for overlapping `src` and `dest` buffers, before calling `memcpy`. Prevents undefined behaviour for overlap in `memcpy` (e.g. partial copying)
 - Assumes `dest` and `src` are valid, non-NULL pointers
-- We originally implemented a `safe_strncpy(...)`, which would copy params as strings into the account struct fields, but this became deprecated when we realised that storing the NULL-terminator was not allowing us to store the full amount of memory for a field, as the account struct is not forgiving (i.e. not possible to) in allocating more space for the NULL-terminator. 
+- We originally used a `safe_strncpy(...)` function to copy strings into the account struct fields. However, we ran into issues because storing a null terminator meant we couldn't use the full fixed-length field (e.g., 10 bytes for the birthdate). Since the struct fields don’t allow any extra space, we switched to using `memcpy()` without a null terminator to ensure the entire field could be used.
 
 ##### ACTUAL FUNCTIONS
 
