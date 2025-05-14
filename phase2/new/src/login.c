@@ -5,6 +5,7 @@
 #include <unistd.h>
 #include <errno.h>
 #include <limits.h>
+#include "banned.h"
 
 
 // Helper function to safely write to a file descriptor
@@ -107,7 +108,7 @@ login_result_t handle_login(const char *userid, const char *password,
   }
   session->account_id = (int)account.account_id;
   session->session_start = login_time;
-  session->expiration_time = login_time + 3600; // 1 hour session
+  session->expiration_time = account.expiration_time;
 
   log_message(LOG_INFO, "Login success: user '%s'.", userid);
   safe_fd_message(client_output_fd, "Login successful.");

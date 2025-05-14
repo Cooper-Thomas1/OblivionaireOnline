@@ -332,6 +332,7 @@ int main(void) {    // test all functions
 #include <time.h>
 #include <stdlib.h>
 #include "account.h"
+#include "banned.h"
 #define MAX_TIME_T ((time_t)(~(time_t)0 >> 1))
 
 int main(void) {

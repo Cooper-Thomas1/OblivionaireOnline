@@ -83,12 +83,9 @@ bool account_lookup_by_userid(const char *userid, account_t *acc) {
   // (Note that it is impossible in C for a function to check whether a string has been
   // properly null-terminated; this is always the responsibility of the caller.)
   if (strncmp(userid, "bob", USER_ID_LENGTH) == 0) {
-    account_t bob_acc = { 0 };
-
-    strcpy(bob_acc.userid, "bob");
-    strcpy(bob_acc.email, "bob.smith@example.com");
-    memcpy(bob_acc.birthdate, "1990-01-01", BIRTHDATE_LENGTH);
-    *acc = bob_acc;
+    account_t *bob_acc = account_create("bob", "password", "bob.smith@example.com", "1990-01-01");
+    *acc = *bob_acc;
+    free(bob_acc);
     return true;
   }
   return false;
