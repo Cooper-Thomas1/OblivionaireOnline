@@ -61,8 +61,8 @@ WARNINGS = -Wall -Wextra -pedantic-errors -Wshadow -Wconversion -Wformat=2 \
            -Wmissing-prototypes -Wstrict-prototypes -Wno-unused-result \
            -Werror=vla -Werror=implicit-function-declaration
 
-CFLAGS = $(DEBUG) -std=c11 $(WARNINGS) $(SECURE_FLAGS) $(SANITIZERS) -O2 \
-         $(INC_FLAGS) $(PKG_CFLAGS)
+CFLAGS = $(DEBUG) -std=c11 $(WARNINGS) $(SECURE_FLAGS) $(SANITIZERS) \
+         $(INC_FLAGS) $(PKG_CFLAGS) -O2 # -O0 -O1 -O2 -O3 -Os
 
 LDFLAGS = -Wl,-z,relro,-z,now -pie $(PKG_LDFLAGS)
 
