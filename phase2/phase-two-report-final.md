@@ -307,7 +307,7 @@ const char *plaintext_password
 | --------------- | ------------- |
 | Use of `crypto_pwhash_str_verify()` from libsodium | Libsodium's Argon2id implementation includes built-in salt and versioning and is memory-hard to resist brute force and GPU-based attacks. |
 | Do not perform fallback or partial matching | Ensures strict and secure authentication — no room for ambiguity or guessing password structure. |
-| Avoid custom hash logic | Prevents introducing cryptographic weaknesses or implementation bugs, as warned against in the *Crypto* lecture. |
+| Avoid custom hash logic | Prevents introducing cryptographic weaknesses or implementation bugs. |
 
 | Difficulty Encountered | Remedy |
 | ---------------------- | ------ |
@@ -344,7 +344,7 @@ login_session_data_t *session);
 | --------------- | ------------- |
 | Order of checks: user existence → expired → banned → failure threshold → password | Prevents unnecessary work and leaking information through timing side-channels. Mirrors STRIDE principles (*Elevation of Privilege*, *Information Disclosure*). |
 | Return different login failure codes for auditing and client feedback | Aligns with the rubric’s layered system assumption and supports better logging/debugging. |
-| Use of helper `safe_fd_message()` for formatted output | Prevents format string vulnerabilities (lecture 5) and ensures safe writes to file descriptors. |
+| Use of helper `safe_fd_message()` for formatted output | Prevents format string vulnerabilities and ensures safe writes to file descriptors. |
 | Checks for `account_id` overflow before casting to int | Prevents potential type-based TOCTOU attacks or corruption of session state. |
 | Resetting fail/success counters as specified | Prevents stale state from persisting between attempts. |
 
