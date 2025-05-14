@@ -17,39 +17,56 @@
 
 ### KEY DESIGN DECISIONS
 
-Our group decided upon discussing the rubric to assume the following:
+We made the following assumptions:
 
 - **Parameter assumptions**  
-  We assume inputs such as pointers and strings are valid and conform to the specification (e.g., not null-terminated). This avoids redundant validation and aligns with separation of responsibilities in modular design. Revalidating inputs could introduce undefined behavior or reduce performance unnecessarily.
+  Assume inputs such as pointers and strings are valid and conform to the specification (e.g., not null-terminated). This avoids redundant validation and aligns with separation of responsibilities in modular design. Revalidating inputs could introduce undefined behavior or reduce performance unnecessarily.
 
 - **Account data storage**  
   `account_t` structs are allocated on the heap and manually freed, as there is no indication of persistent storage. The `db.h` header only provides function declarations, suggesting that in-memory management is expected and sufficient.
 
 - **Logging and DB stubs**  
-  Since logging and database functions are provided as stubs, our responsibility is limited to calling them correctly. We use `log_message()` to report errors, but we do not handle error recovery internally. This follows the layered approach to the *OO* system our group has decided.
+  Since logging and database functions are provided as stubs, our responsibility is limited to calling them correctly. We use `log_message()` to report errors, but we do not handle error recovery internally. This follows the layered approach of the *OO* system design.
 
 - **Client abstraction**  
-  We treat `client_output_fd` as an abstraction for client communication. It is assumed that file descriptors are valid, and that low-level networking tasks (like buffering and concurrency) are dealt with in higher-levels of the *OO* system.
+  Treat `client_output_fd` as an abstraction for client communication. It is assumed that file descriptors are valid, and that low-level networking tasks (like buffering and concurrency) are dealt with in higher-levels of the *OO* system design.
 
 - **Time Handling**  
   We use `time(NULL)` to obtain the current time for handling bans and expirations. This is the conventional and portable way to represent "now" in C, and no alternative timing source was specified in the rubric.
 
 - **Thread safety handling**  
-  We assume that thread safety is managed by the caller or higher-level components. Our functions do not modify shared global state, so internal thread-safety mechanisms would be unnecessary and potentially over-engineered for our low-level implementations.  
-  `account_t` itself is not necessarily global or shared, but rather how instances of it are accessed (e.g., in `alternate_main.c`). Thus, our team in implementing phase 2 are not responsible for thread safety, rather the callers.
+  Assume that thread safety is managed by the caller or higher-level components. Our functions do not modify shared global state, so internal thread-safety mechanisms would be unnecessary and potentially over-engineered for our low-level implementations.  
+  `account_t` itself is not necessarily global or shared, but rather how instances of it are accessed (e.g., in `alternate_main.c`). Thus, the caller is responsible for thread safety.
+  
 
-### DIFFICULTIES WE ENCOUNTERED
+## DIFFICULTIES WE ENCOUNTERED
 
-Our group faced the following issues when completing phase 2 on this project (and how we addressed them):
+Our group faced the following issues when completing Phase 2, and we addressed them as follows:
 
-- Ambiguity around thread safety
-- Ambiguity in the project specs
-- Choosing field lengths and NULL-terminators
-- Proper use of stub functions (e.g., logging, DB)
-- Balancing "reasonable assumptions" vs "project specs"
-- Issues over version control robustness (i.e., pull requests reviewed by everyone doesn't really work)
-- Commenting and code clarity
-- Not using banned functions
+- **Ambiguity around thread safety**  
+  We assumed thread safety was the responsibility of higher-level components and ensured our code avoided shared global state.
+
+- **Ambiguity in the project specs**  
+  When uncertain, we followed the spec literally and documented assumptions in comments and this report.
+
+- **Choosing field lengths and NULL-terminators**  
+  We carefully used `strnlen()` and `safe_memcpy()` to avoid overflows and ensured fields did not rely on implicit null termination unless explicitly designed that way.
+
+- **Proper use of stub functions (e.g., logging, DB)**  
+  We limited our use of stub functions to their documented roles and avoided making assumptions about their internal behavior.
+
+- **Balancing "reasonable assumptions" vs. "project specs"**  
+  We favored clarity and documented our decisions where specs were ambiguous, aiming for consistency and defensive defaults.
+
+- **Issues over version control robustness**  
+  We adjusted our workflow to make smaller, well-scoped commits and tested locally before merging, rather than relying solely on pull request reviews.
+
+- **Commenting and code clarity**  
+  We added concise, meaningful comments where the code wasn’t self-explanatory, and avoided over-commenting obvious logic.
+
+- **Not using banned functions**  
+  We avoided unsafe functions like `strcpy`, `scanf`, and `gets`, and used safer alternatives such as `snprintf`, `strnlen`, and custom memory-safe wrappers.
+
 
 ### FUNCTION SPECIFIC DESIGN DECISIONS/DIFFICULTIES
 
