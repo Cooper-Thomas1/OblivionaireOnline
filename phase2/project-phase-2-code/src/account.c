@@ -10,6 +10,8 @@
 #include <unistd.h>
 #include "banned.h"
 
+extern char *strptime(const char *s, const char *format, struct tm *tm);
+
 // Returns true if valid, false if not. If valid, out_len is set to the length to store.
 bool validate_email(const char *email, size_t *out_len);
 
