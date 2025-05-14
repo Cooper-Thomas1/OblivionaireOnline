@@ -305,7 +305,7 @@ const char *plaintext_password
 
 | Design Decision | Justification |
 | --------------- | ------------- |
-| Use of `crypto_pwhash_str_verify()` from libsodium | Follows best practices outlined in lecture 8 (*Crypto*). Libsodium's Argon2id implementation includes built-in salt and versioning and is memory-hard to resist brute force and GPU-based attacks. |
+| Use of `crypto_pwhash_str_verify()` from libsodium | Libsodium's Argon2id implementation includes built-in salt and versioning and is memory-hard to resist brute force and GPU-based attacks. |
 | Do not perform fallback or partial matching | Ensures strict and secure authentication — no room for ambiguity or guessing password structure. |
 | Avoid custom hash logic | Prevents introducing cryptographic weaknesses or implementation bugs, as warned against in the *Crypto* lecture. |
 
@@ -322,7 +322,7 @@ const char *new_plaintext_password
 
 | Design Decision | Justification |
 | --------------- | ------------- |
-| Securely zero old password hash with `sodium_memzero()` before overwriting | Prevents residual sensitive data from remaining in memory, a key point emphasized in the *Memory and Arithmetic Errors* lecture (e.g. Heartbleed and stale data reuse). |
+| Securely zero old password hash with `sodium_memzero()` before overwriting | Prevents residual sensitive data from remaining in memory (e.g. Heartbleed and stale data reuse). |
 | Use of same hashing function as initial password creation | Maintains consistency and reliability across the system. |
 | No in-place reallocation or risky string manipulations | Avoids undefined behavior and stack/heap corruption. |
 
