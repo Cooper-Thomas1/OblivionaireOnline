@@ -33,7 +33,11 @@ int safe_memcpy(char *dest, const char *src, size_t max_len);
  * @return true if the email is valid, false otherwise (logs error on failure).
  */
 bool validate_email(const char *email, size_t *out_len) {
-  size_t len = strnlen(email, EMAIL_LENGTH);
+  size_t len = strnlen(email, EMAIL_LENGTH + 1);
+  if (len > EMAIL_LENGTH) {
+      log_message(LOG_WARN, "Email truncated to fit buffer.");
+      len = EMAIL_LENGTH;
+  }
   for (size_t i = 0; i < len; ++i) {
     if (!isprint((unsigned char)email[i]) || isspace((unsigned char)email[i])) {
       log_message(LOG_ERROR, "Invalid email format. Email must be ASCII printable and contain no spaces.");
@@ -232,7 +236,11 @@ account_t *account_create(const char *userid, const char *plaintext_password,
   }
   safe_memcpy(new_account->birthdate, birthdate, bday_len);
 
-  size_t userid_len = strnlen(userid, USER_ID_LENGTH);
+  size_t userid_len = strnlen(userid, USER_ID_LENGTH + 1);
+  if (userid_len > USER_ID_LENGTH) {
+      log_message(LOG_WARN, "User ID truncated to fit buffer.");
+      userid_len = USER_ID_LENGTH;
+  }
   safe_memcpy(new_account->userid, userid, userid_len);
 
   new_account->account_id = 0;

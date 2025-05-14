@@ -473,7 +473,7 @@ int main(void) // all empty fields
         "",
         "",
         "",
-        ""
+        "0000-00-00"
     );
     if (!acc) {
         dprintf(STDOUT_FILENO, "Failed to create account.\n");
@@ -544,9 +544,8 @@ int main(void) {
 
 #endif // TEST_11
 
-// #ifdef TEST_12
+#ifdef TEST_12
 #include <string.h>
-#include "banned.h"
 int main(void) // Test same password hash
 {
     account_t *acc = account_create(
@@ -580,4 +579,4 @@ int main(void) // Test same password hash
     account_free(acc2);
     return 0;
 }
-// #endif // TEST_12
+#endif // TEST_12
