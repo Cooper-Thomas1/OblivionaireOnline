@@ -8,6 +8,7 @@
 #include <stdint.h>
 #include <arpa/inet.h>
 #include <unistd.h>
+#include "banned.h"
 
 // Returns true if valid, false if not. If valid, out_len is set to the length to store.
 bool validate_email(const char *email, size_t *out_len);
@@ -84,29 +85,22 @@ bool validate_birthdate(const char *bday, size_t *out_len) {
   } 
 
   struct tm tm = {0};
-  // strptime version (recommended, but may not be available on all platforms e.g. my Windows)
-  /*
-  if (strptime(bday, "%Y-%m-%d", &tm) == NULL) {
-    log_message(LOG_ERROR, "Invalid birthdate format or values.");
+  if (!strptime(bday, "%Y-%m-%d", &tm)) {
+    log_message(LOG_ERROR, "Invalid birthdate format or values (strptime).");
     return false;
   }
-  */
-
-  // sscanf version (manual parsing, less robust)
-  int year, month, day;
-  if (sscanf(bday, "%4d-%2d-%2d", &year, &month, &day) != 3) {
-    log_message(LOG_ERROR, "Invalid birthdate format or values (sscanf).");
-    return false;
-  }
-  tm.tm_year = year - 1900;
-  tm.tm_mon = month - 1;
-  tm.tm_mday = day;
-  ////
 
   tm.tm_isdst = -1;
   time_t t = mktime(&tm);
-  if (t == -1 || tm.tm_year != year - 1900 || tm.tm_mon != month - 1 || tm.tm_mday != day) {
-    log_message(LOG_ERROR, "Invalid birthdate value.");
+  if (t == -1) {
+    log_message(LOG_ERROR, "Invalid birthdate value (mktime).");
+    return false;
+  }
+
+  char formatted[BIRTHDATE_LENGTH + 1];
+  strftime(formatted, sizeof(formatted), "%Y-%m-%d", &tm);
+  if (strcmp(formatted, bday) != 0) {
+    log_message(LOG_ERROR, "Birthdate is not a valid calendar date.");
     return false;
   }
 
