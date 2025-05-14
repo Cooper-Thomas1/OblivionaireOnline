@@ -200,7 +200,7 @@ const char *email, const char *birthdate);
 | **Validating Birthdate** | Accounting for future dates using `time.h` library. Using potentially unsafe function `sscanf()` to read the birthdate is not an issue in our case as we know the value is a valid null terminated input |
 | **Validating Email** | Used `isprint()` and `isspace()` to ensure email consists of printable and non whitespace ASCII characters. |
 | **Hashing Password**| Used the libsodium Argon2id algorithm to ensure effective hashing of the plaintext password. |
-```
+```c
 void account_free(account_t *acc);
 ```
 
@@ -212,7 +212,7 @@ void account_free(account_t *acc);
 | Difficulty Encountered | Remedy |
 | ---------------------- | ------ |
 | **Sensitive data may still be accessible** | Using `_sodium_memzero()` to overwrite the memory reduces the chance that sensitive data still remains in memory after deallocation. |
-```
+```c
 void account_set_email(account_t *acc, const char *new_email);
 ```
 
