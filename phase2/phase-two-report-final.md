@@ -326,6 +326,15 @@ const char *new_plaintext_password
 
 ### 3.5 Login Handling
 
+Helper function:
+This helper function safely writes a formatted string to a file descriptor using a fixed-size buffer (buf[256]). It uses vsnprintf() to avoid format string vulnerabilities and buffer overflows, then writes the resulting string using write().
+
+The output is truncated if the formatted string exceeds the buffer size, but this prevents accidental memory corruption or leaking uninitialized memory.
+
+We chose not to add error handling for write() failures here, as the calling function is responsible for interpreting success or failure and responding appropriately.
+We avoid using `dprintf()` directly because it lacks bounds checking, which could lead to buffer overflows or format string vulnerabilities if misused.
+
+
 ```c
 login_result_t handle_login(const char *username, const char *password,
 ip4_addr_t client_ip, time_t login_time,
