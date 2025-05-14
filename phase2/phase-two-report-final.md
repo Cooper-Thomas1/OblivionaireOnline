@@ -120,26 +120,26 @@ account_t *account_create(const char *userid, const char *plaintext_password,
 void account_free(account_t *acc);
 ```
 
-- Assumes a user would not try free a NULL account pointer, so will warn in a system log.
-- Sets all data in `account_t` to 0 using a `libsodium` provided function `sodium_memzero()` that is guaranteed to not be optimised away. This is done to prevent sensitive user info left in the heap (for unauthorised eyes to see...)
-- Issue with initial implementation using `memcpy()`
+- Assumes a user would not try to free a NULL account pointer, so will warn in a system log.
+- Sets all data in `account_t` to 0 using a `libsodium` provided function `sodium_memzero()` that is guaranteed to not be optimised away. This is done to prevent sensitive user info left in the heap (for unauthorised eyes to see).
+- This was changed from initial implementation using `memcpy()`
 
 ```c
 bool account_validate_password(const account_t *acc, const char *plaintext_password);
 bool account_update_password(account_t *acc, const char *new_plaintext_password);
 ```
 
-- Passes off responsibility to `libsodium` with a password comparator `crypto_pwhash_str_verify`. Assumes the `plaintext_password` is small enough to work with the library...
-- When updating the password, we remove the old one using `sodium_memzero` explicitly just in case if the old password hash may linger (even just partially) in unused memory in the `account_t` field. Securely erases.
+- Passes off responsibility to `libsodium` with a password comparator `crypto_pwhash_str_verify`. Assumes the `plaintext_password` is small enough to work with the library.
+- When updating the password, we explicitly clear the old hash using `sodium_memzero()` to prevent any part of it from lingering in memory. This ensures that sensitive data doesn’t remain in the `account_t` struct after it's no longer needed.
+
 
 ```c
 void account_record_login_success(account_t *acc, ip4_addr_t ip);
 void account_record_login_failure(account_t *acc);
 ```
-
-- If the `acc->login_count` is at `UINT_MAX`, then we don't increment as this would wrap around to zero (unsigned int behaviour). We don't log a warning as if a malicious user was to try DoS by spamming the login, we would not want our system logs to be spammed with *login count at UINT_MAX* as it would be a nightmare to trawl...
-- Accesses system clock `time(NULL)` to store "now", not so worried about its implementation.
-- Initial issues with unsigned integer overflows, thus adding `UINT_MAX` check.
+- If `acc->login_count` reaches `UINT_MAX`, we stop incrementing it to avoid unsigned integer overflow, which would wrap it back to zero. We chose not to log a warning in this case to avoid log spam from repeated login attempts — especially if used as part of a denial-of-service strategy.
+- We use `time(NULL)` to capture the current time for login-related timestamps. This is standard in C, and we didn't encounter any issues with its behavior.
+- We originally overlooked the risk of overflow in `login_count` and `login_fail_count`, but added an explicit check against `UINT_MAX` to prevent it.
 
 ```c
 bool account_is_banned(const account_t *acc);
@@ -153,16 +153,14 @@ bool account_is_expired(const account_t *acc);
 void account_set_unban_time(account_t *acc, time_t t);
 void account_set_expiration_time(account_t *acc, time_t t);
 ```
-
-- Assumes the caller understands what the `t` value they are passing is valid and works with the high-levels of the *OO* system. E.g. our code does not check for `t < 0` as the caller may have a specific meaning for negative unban times, and our group has prioritised following the project spec.
-- Issues with *what constitutes as a valid `t` value*, decided the project spec does not specify, thus better not to make assumptions...
+- We assume the caller understands what the `t` value represents and that it aligns with the expectations of the higher-level *OO* system. For example, we don’t check for `t < 0`, since negative values might have a defined meaning elsewhere in the system. Our priority was to follow the project specification as written, which does not restrict the range of `t`.
+- There was some uncertainty around what qualifies as a valid `t` value, but since the spec didn’t provide any constraints, we chose not to make assumptions or enforce arbitrary limits.
 
 ```c
 void account_set_email(account_t *acc, const char *new_email);
 ```
-
-- Wrapper around the `bool validate_email(...)`, DRY. Reuse of code used in `account_create()`.
-- Nothing much to add, see `account_create`
+- This function wraps the existing `validate_email(...)` helper, following the DRY principle by reusing the same logic used in `account_create()` to ensure consistency in validation.
+- Its behavior closely mirrors the email handling in `account_create()`, so there were no additional edge cases or design considerations specific to this function.
 
 ```c
 bool account_print_summary(const account_t *acct, int fd);
@@ -178,8 +176,6 @@ bool account_print_summary(const account_t *acct, int fd);
 ##### HELPER FUNCTIONS
 
 ##### ACTUAL FUNCTIONS
-
-## FUNCTION DESIGN CHOICES
 
 ### 3.3 Account management
 
@@ -329,6 +325,15 @@ const char *new_plaintext_password
 | Buffer sizing | Verified that the hash output + null terminator fits inside the defined `HASH_LENGTH + 1`. |
 
 ### 3.5 Login Handling
+
+Helper function:
+This helper function safely writes a formatted string to a file descriptor using a fixed-size buffer (buf[256]). It uses vsnprintf() to avoid format string vulnerabilities and buffer overflows, then writes the resulting string using write().
+
+The output is truncated if the formatted string exceeds the buffer size, but this prevents accidental memory corruption or leaking uninitialized memory.
+
+We chose not to add error handling for write() failures here, as the calling function is responsible for interpreting success or failure and responding appropriately.
+We avoid using `dprintf()` directly because it lacks bounds checking, which could lead to buffer overflows or format string vulnerabilities if misused.
+
 
 ```c
 login_result_t handle_login(const char *username, const char *password,
