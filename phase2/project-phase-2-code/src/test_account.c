@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <unistd.h>
 
-// #ifdef TEST_1
+#ifdef TEST_1
 int main(void) {
     account_t *acc = account_create(
         "testuser",
@@ -46,7 +46,7 @@ int main(void) {
 
     return 0;
 }
-// #endif // test_1
+#endif // test_1
 
 #ifdef TEST_2   // empty password
 int main(void) {
@@ -324,7 +324,7 @@ int main(void) {    // test all functions
 }
 #endif // test_8
 
-#ifdef TEST_DIABOLICAL
+// #ifdef TEST_DIABOLICAL
 #include <stdio.h>
 #include <string.h>
 #include <limits.h>
@@ -358,7 +358,7 @@ int main(void) {
 
     // 3. Invalid but null-terminated birthdates
     const char *bad_dates[] = {
-        "2024-02-30", "2000-13-01", "2000-00-00", "abcd-ef-gh", "9999-99-99", "2000-11-31", "0000-00-00"
+        "2024-02-30", "2000-13-01", "2000-00-00", "abcd-ef-gh", "9999-99-99", "2000-11-31", "0000-00-00", "3000-01-01", "1000-01-01"
     };
     for (size_t i = 0; i < sizeof(bad_dates)/sizeof(bad_dates[0]); ++i) {
         account_t *tmp = account_create("evil", "pw", "evil@example.com", bad_dates[i]);
@@ -439,7 +439,7 @@ int main(void) {
     dprintf(STDOUT_FILENO, "=== End DIABOLICAL account tests (safe preconditions) ===\n");
     return 0;
 }
-#endif // TEST_DIABOLICAL
+// #endif // TEST_DIABOLICAL
 
 #ifdef TEST_9
 int main(void) {
@@ -546,7 +546,6 @@ int main(void) {
 
 #ifdef TEST_12
 #include <string.h>
-#include "banned.h"
 int main(void) // Test same password hash
 {
     account_t *acc = account_create(

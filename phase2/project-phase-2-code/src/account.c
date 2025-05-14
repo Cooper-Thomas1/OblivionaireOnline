@@ -10,6 +10,7 @@
 #include <unistd.h>
 #include "banned.h"
 
+// Include the declaration for strptime to avoid compiler errors.
 extern char *strptime(const char *s, const char *format, struct tm *tm);
 
 // Returns true if valid, false if not. If valid, out_len is set to the length to store.
@@ -28,7 +29,7 @@ int safe_memcpy(char *dest, const char *src, size_t max_len);
 /**
  * @brief Validates that an email is ASCII printable and contains no spaces.
  *
- * The email must be a null-terminated string of length 1 to EMAIL_LENGTH (inclusive),
+ * The email must be a null-terminated string of length 0 to EMAIL_LENGTH (inclusive),
  * containing only printable ASCII characters and no spaces.
  *
  * @param email    Null-terminated string to validate.
@@ -55,7 +56,7 @@ bool validate_email(const char *email, size_t *out_len) {
 /**
  * @brief Validates a birthdate string for correct format and calendar validity.
  *
- * The birthdate must be a null-terminated string of exactly BIRTHDATE_LENGTH (10) characters,
+ * The birthdate must be a null-terminated string of exactly BIRTHDATE_LENGTH characters,
  * in the format YYYY-MM-DD, with hyphens in the correct positions and digits elsewhere.
  * The default value "0000-00-00" is allowed. If valid, optionally sets out_len to BIRTHDATE_LENGTH.
  *
@@ -72,22 +73,11 @@ bool validate_birthdate(const char *bday, size_t *out_len) {
   if (strcmp(bday, "0000-00-00") == 0) {
     if (out_len) *out_len = BIRTHDATE_LENGTH;
     return true;
-  }
-
-  for (int i = 0; i < BIRTHDATE_LENGTH; ++i) {
-    if ((i == 4 || i == 7)) {
-      if (bday[i] != '-') {
-        log_message(LOG_ERROR, "Birthdate format error: missing hyphens.");
-        return false;
-      }
-    } else if (!isdigit((unsigned char)bday[i])) {
-      log_message(LOG_ERROR, "Birthdate format error: non-digit characters found.");
-      return false;
-    }
   } 
 
   struct tm tm = {0};
-  if (!strptime(bday, "%Y-%m-%d", &tm)) {
+  char *res = strptime(bday, "%Y-%m-%d", &tm);
+  if (!res || *res != '\0') {
     log_message(LOG_ERROR, "Invalid birthdate format or values (strptime).");
     return false;
   }
@@ -99,9 +89,9 @@ bool validate_birthdate(const char *bday, size_t *out_len) {
     return false;
   }
 
-  char formatted[BIRTHDATE_LENGTH + 1];
+  char formatted[BIRTHDATE_LENGTH + 1];   // Check for normalised dates
   strftime(formatted, sizeof(formatted), "%Y-%m-%d", &tm);
-  if (strcmp(formatted, bday) != 0) {
+  if (strncmp(formatted, bday, BIRTHDATE_LENGTH) != 0) {
     log_message(LOG_ERROR, "Birthdate is not a valid calendar date.");
     return false;
   }
@@ -266,7 +256,6 @@ account_t *account_create(const char *userid, const char *plaintext_password,
  */
 void account_free(account_t *acc) {
   if (acc == NULL) {
-    log_message(LOG_WARN, "Attempted to free a NULL account pointer.");
     return;
   }
   sodium_memzero(acc, sizeof(account_t));
@@ -284,8 +273,8 @@ void account_free(account_t *acc) {
  * @param acc Pointer to the account structure (must not be NULL).
  * @param plaintext_password Null-terminated string containing the password to verify (must not be NULL).
  *
- * @pre Both @p acc and @p plaintext_password must be non-NULL.
- * @pre @p plaintext_password must be a valid, null-terminated string.
+ * @pre Both acc and plaintext_password must be non-NULL.
+ * @pre plaintext_password must be a valid, null-terminated string.
  *
  * @return true if the password matches the stored hash, false otherwise or on error.
  */
@@ -387,7 +376,7 @@ bool account_is_banned(const account_t *acc) {
  * @brief Checks if the account is currently expired.
  *
  * Compares the current system time with the account's expiration time.
- * If the current time is earlier than the expiration time, the account is considered expired.
+ * If the current time is later than the expiration time, the account is considered expired.
  *
  * @param acc A pointer to the account structure to check. Must not be NULL.
  * @pre acc must be non-NULL.
