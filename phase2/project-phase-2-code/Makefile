@@ -52,7 +52,7 @@ PKG_LDFLAGS := $(if $(strip $(PKG_DEPS)),$(shell pkg-config --libs $(PKG_DEPS)))
 # not necessarily use the same flags when testing your code.
 DEBUG = -g -fno-omit-frame-pointer
 SECURE_FLAGS = -fstack-protector-strong -fPIE -D_FORTIFY_SOURCE=2 -fno-common
-SANITIZERS = -fsanitize=address,undefined
+SANITIZERS = -fsanitize=address,undefined,leak
 WARNINGS = -Wall -Wextra -pedantic-errors -Wshadow -Wconversion -Wformat=2 \
            -Wcast-align -Wpointer-arith -Wstrict-overflow=5 -Wswitch-enum \
            -Wunreachable-code -Winit-self -Wfloat-equal -Wundef \

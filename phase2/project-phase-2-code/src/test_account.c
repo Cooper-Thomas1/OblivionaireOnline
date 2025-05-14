@@ -546,6 +546,7 @@ int main(void) {
 
 // #ifdef TEST_12
 #include <string.h>
+#include "banned.h"
 int main(void) // Test same password hash
 {
     account_t *acc = account_create(
