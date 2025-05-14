@@ -20,7 +20,7 @@
 Our group decided upon discussing the rubric to assume the following:
 
 - **Parameter assumptions**  
-  We assume inputs such as pointers and strings are valid and conform to the specification (e.g., null-terminated). This avoids redundant validation and aligns with separation of responsibilities in modular design. Revalidating inputs could introduce undefined behavior or reduce performance unnecessarily.
+  We assume inputs such as pointers and strings are valid and conform to the specification (e.g., not null-terminated). This avoids redundant validation and aligns with separation of responsibilities in modular design. Revalidating inputs could introduce undefined behavior or reduce performance unnecessarily.
 
 - **Account data storage**  
   `account_t` structs are allocated on the heap and manually freed, as there is no indication of persistent storage. The `db.h` header only provides function declarations, suggesting that in-memory management is expected and sufficient.
@@ -36,18 +36,20 @@ Our group decided upon discussing the rubric to assume the following:
 
 - **Thread safety handling**  
   We assume that thread safety is managed by the caller or higher-level components. Our functions do not modify shared global state, so internal thread-safety mechanisms would be unnecessary and potentially over-engineered for our low-level implementations.  
-  `account_t` itself is not necessarily global or shared, but rather how instances of it are accessed (e.g., in `alternate_main.~~~~c`). Thus, our team in implementing phase 2 are not responsible for thread safety, rather the callers.
+  `account_t` itself is not necessarily global or shared, but rather how instances of it are accessed (e.g., in `alternate_main.c`). Thus, our team in implementing phase 2 are not responsible for thread safety, rather the callers.
 
 ### DIFFICULTIES WE ENCOUNTERED
 
 Our group faced the following issues when completing phase 2 on this project (and how we addressed them):
 
 - Ambiguity around thread safety
+- Ambiguity in the project specs
 - Choosing field lengths and NULL-terminators
 - Proper use of stub functions (e.g., logging, DB)
 - Balancing "reasonable assumptions" vs "project specs"
 - Issues over version control robustness (i.e., pull requests reviewed by everyone doesn't really work)
 - Commenting and code clarity
+- Not using banned functions
 
 ## FUNCTION DESIGN CHOICES
 
