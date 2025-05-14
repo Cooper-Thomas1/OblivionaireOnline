@@ -177,8 +177,6 @@ bool account_print_summary(const account_t *acct, int fd);
 
 ##### ACTUAL FUNCTIONS
 
-## FUNCTION DESIGN CHOICES
-
 ### 3.3 Account management
 
 ```c
