@@ -1,5 +1,16 @@
 # Oblivionaire Online
 
+## Background
+Your team work as software developers for Enjjin Media, the game publisher behind such well-known hit titles as The Least of Us and Underwatch. The company is now venturing into the MMORPG (Massively Multiplayer Online Role-Playing Game) space with its latest project: Oblivionaire Online (OO) An ambitious new online multiplayer game, Oblivionaire Online thrusts players into a post apocalyptic world in which obscenely rich plutocrats have brought about the end of civilised society. Players take on the roles of neo-feudal barons, financial warlords and venture capitalists, vying for control over the shattered remains of civilisation: piloting extravagant mecha-suits, defending their fortified enclaves, and wielding grotesque amounts of resources while the rest of the world burns. Enjjin Media’s marketing department predict that this sort of escapist fantasy is exactly the kind of thing that today’s consumers will flock to.
+
+## Specs
+Enjjin Media has tasked your team with developing a critical subsystem for OO– the Access Control System (ACS). This system will be responsible for authenticating players, managing account security, and enforcing access policies for both users and Enjjin’s operations staff.
+The ACS has the following responsibilities:
+- Player authentication– Ensuring that only registered players can log in
+- Role-based access control (RBAC)– Managing in-game privileges, from ordinary wasteland wanderers to elite plutocratic overlords with access to game-altering financial instruments
+- Session management– Handling login sessions, preventing unauthorized access, and dealing with connection timeouts or suspicious activity
+- Admin and operations access– Providing secure tools for Enjjin’s staff to manage accounts, enforce bans, and troubleshoot authentication issues
+
 ## Contents
 
 This directory contains a Makefile, C code and configuration files for the "Oblivionaire Online" project.
