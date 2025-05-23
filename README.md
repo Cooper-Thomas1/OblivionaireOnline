@@ -1,6 +1,4 @@
----
-title: Oblivionaire Online (OO) project code
----
+# Oblivionaire Online
 
 ## Contents
 
